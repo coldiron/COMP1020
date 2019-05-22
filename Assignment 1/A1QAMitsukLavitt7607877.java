@@ -49,11 +49,16 @@ public class A1QAMitsukLavitt7607877 {
             "Rozshenko, Alexander"
         };
 
+        // Add a blank line to make any errors print more neatly
+        System.out.println(); 
+
         // Seat the bookings.
-        System.out.println(); // Add a blank line to make any errors print more neatly
         String[] firstSeats  = seatBooking(firstBooking);
         String[] secondSeats = seatBooking(secondBooking);
         String[] thirdSeats = seatBooking(Bookings.getBookings());
+
+        // Add a line after any errors.
+        System.out.println();
 
         // Display our seating plans.
         System.out.println("Seated bookings:\n");
@@ -77,9 +82,8 @@ public class A1QAMitsukLavitt7607877 {
         }
     }
 
-    /* PURPOSE: Seats a given array of passengers in a new appropriately sized
-     *          array of airline seats.
-     *          Returns 
+    /* PURPOSE: Seats a given array of passengers. Returns a new, appropriately sized
+     *          array of airline seats assigned to passengers.
      */
     private static String[] seatBooking(String[] bookings) {
         // Get the size of the flight by parsing the first element of the 
@@ -96,13 +100,12 @@ public class A1QAMitsukLavitt7607877 {
         // the counter in each iteration.
         int groupSizePosition = 1;
         while (groupSizePosition < bookings.length) {
-            int groupSize = Integer.parseInt(bookings[groupSizePosition]);
+            int groupSize = getGroupSize(bookings, groupSizePosition);
 
             // See if there enough seats remaining on the flight for the group
             if(groupSize > emptySeats(seats)) {
-                System.err.println("Not enough seats remaining for group of size " +
-                                   groupSize + " with members:");
-                printGroupMembers(bookings, groupSize, groupSizePosition);
+                System.err.println("Not enough seats remaining for group of " + groupSize + " with members:");
+                printGroupMembers(bookings, groupSizePosition);
                 System.out.println();
                 // Traverse the array to the next group
                 groupSizePosition += groupSize + 1;
@@ -110,48 +113,64 @@ public class A1QAMitsukLavitt7607877 {
             // Go through the seats array to determine if a block of empty seats
             // large enough to fit the entire group is available.
             else if(checkSeatBlocks(seats, groupSize)) {
-                seats = seatGroupInBlock(seats, bookings, groupSize, groupSizePosition);
+                seats = seatGroupInBlock(seats, bookings, groupSizePosition);
                 groupSizePosition += groupSize + 1;
             }
             // Seat the rest randomly.
             else {
-                seatRandomly(seats, bookings, groupSize, groupSizePosition);
+                seatRandomly(seats, bookings, groupSizePosition);
                 groupSizePosition += groupSize + 1;
             }
         }
         return seats;
     }
 
-    private static void printGroupMembers(String[] bookings, int groupSize, int groupSizePosition) {
+    
+    private static void printGroupMembers(String[] bookings, int groupSizePosition) {
        int start = groupSizePosition + 1;
+       int groupSize = getGroupSize(bookings, groupSizePosition);
         for(int i = start; i < start + groupSize; i++) {
             System.out.println(bookings[i]);
         } 
     }
 
-    private static String[] seatRandomly(String[] seats, String[] bookings, int groupSize, int groupSizePosition) {
-        int passengersBooked = 0;
-        while(passengersBooked < groupSize) {
+    /**
+     * Seats passengers in a random manner.
+     * Selects random element in array of seats and checks if it is empty. If so,
+     * a passenger will be seated in that seat.
+     */
+    private static String[] seatRandomly(String[] seats, String[] bookings, int groupSizePosition) {
+        int passengersSeated = 0;
+        int groupSize = getGroupSize(bookings, groupSizePosition);
+
+        while(passengersSeated < groupSize) {
             int randomSeat = (int) (Math.random() * seats.length);
+
             if(seats[randomSeat] == EMPTY_SEAT_LABEL) {
-                seats[randomSeat] = bookings[groupSizePosition + 1 + passengersBooked];
-                passengersBooked++;
+                seats[randomSeat] = bookings[groupSizePosition + 1 + passengersSeated];
+                passengersSeated++;
             }
         }
         return seats;
     }
 
-    private static String[] seatGroupInBlock(String[] seats, String[] bookings, int groupSize, int groupSizePosition) {
+    private static int getGroupSize(String[] bookings, int groupSizePosition) {
+        return Integer.parseInt(bookings[groupSizePosition]);
+    }
+
+    private static String[] seatGroupInBlock(String[] seats, String[] bookings, int groupSizePosition) {
+        int groupSize = getGroupSize(bookings, groupSizePosition);
         boolean seated = false;
 
         while(seated == false) {
-            // Look for a block starting anywhere from the beginning of the seats up to the
+            // Look for a random block starting anywhere from the beginning of the seats up to the
             // last possible place the seating will fit, which is seats.length - groupSize.
             int randomBlockStart = (int) (Math.random() * (seats.length - groupSize + 1));
             int endOfBlock = groupSize + randomBlockStart;
             int emptyConsecutiveSeats = seatsInBlock(seats, groupSize, randomBlockStart, endOfBlock);
 
             if(emptyConsecutiveSeats >= groupSize) {
+                // Traverse our group and seat them
                 for(int i = 0; i < groupSize; i++) {
                     seats[randomBlockStart + i] = bookings[groupSizePosition + i + 1];
                 }
@@ -161,20 +180,42 @@ public class A1QAMitsukLavitt7607877 {
         return seats;
     }
 
+    /**
+     * Checks the *entire* flight to see if *any* blocks that will fit a group of
+     * passengers is available.
+     * 
+     * @param  seats         Array of all seats on flight
+     * @param  groupSize     Size of the group we are trying to seat
+     * 
+     * @return               whether or not there is an available block
+     */
     private static boolean checkSeatBlocks(String[] seats, int groupSize) {
         boolean seatBlockAvailable = false;
+
         if (seatsInBlock(seats, groupSize, 0, seats.length) >= groupSize) {
             seatBlockAvailable = true;
         }
         return seatBlockAvailable;
     }
 
+    // Checks if a given seat is empty
     private static boolean seatEmpty(String seat) {
         return seat == EMPTY_SEAT_LABEL;
     }
 
+    /**
+     * Counts empty seats in a given block of seats
+     * 
+     * @param  seats         Array of all seats on flight
+     * @param  groupSize     Size of the group we are trying to seat
+     * @param  position      Starting position of block we are checking
+     * @param  endOfBlock    End of block we are checking
+     * 
+     * @return               number of seats remaining
+     */
     private static int seatsInBlock(String[] seats, int groupSize, int position, int endOfBlock) {
         int seatsInBlock = 0;
+
         for(; position < endOfBlock && seatsInBlock < groupSize; position++) {
             // Increment seats in block if we encounter an empty seat.
             if(seatEmpty(seats[position])) {
@@ -188,8 +229,10 @@ public class A1QAMitsukLavitt7607877 {
         return seatsInBlock;
     }
 
+    // Counts empty seats remaining on flight.
     private static int emptySeats(String[] seats) {
         int emptySeats = 0;
+
         for(String seat: seats) {
             if(seatEmpty(seat)) {
                 emptySeats++;
