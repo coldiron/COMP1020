@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - A1QAMitsukLavitt7607877",
+            "request": "launch",
+            "mainClass": "A1QAMitsukLavitt7607877"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - A1QAMitsukLavitt7607877",
+            "request": "launch",
+            "mainClass": "A1QAMitsukLavitt7607877",
+            "projectName": "Assignment 1_ae6a1ffe"
+        }
+    ]
+}
