@@ -10,18 +10,6 @@
  * PURPOSE: Simple date book.
  */
 public class A1QBMitsukLavitt7607877 {
-    private static final String[] EVENT_NAMES = new String[] {
-            "Battle at Wolf 359",
-            "Dinner with Brian Kernighan",
-            "Get Infinity Gauntlet",
-            "Tune up Millenium Falcon",
-            "Groundhog Day",
-            "Take the Iron Throne",
-            "Find Holy Grail",
-            "Trip to Mordor",
-            "Meeting with boss",
-            "Buy new shoes"
-    };
 
     public static void main(String[] args) {
         Event[] september = new Event[30];
@@ -121,8 +109,20 @@ public class A1QBMitsukLavitt7607877 {
     }
 
     private static void fillRandomEvents(Event[] month) {
+        final String[] EVENT_NAMES = new String[] {
+                "Battle at Wolf 359",
+                "Dinner with Brian Kernighan",
+                "Get Infinity Gauntlet",
+                "Tune up Millenium Falcon",
+                "Groundhog Day",
+                "Take the Iron Throne",
+                "Find Holy Grail",
+                "Trip to Mordor",
+                "Meeting with boss",
+                "Buy new shoes"
+        };
+        
         int filled = 0;
-
         while(filled < 10) {
             // Pick a random day
             int pos = (int)(Math.random() * (month.length));
