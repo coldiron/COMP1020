@@ -1,3 +1,14 @@
+/**
+ * A1QBMitsukLavitt7607877 
+ *
+ * COMP 1020 SECTION D01
+ * INSTRUCTOR    Safiur Mahdi
+ * ASSIGNMENT    Assignment 1, question B
+ * @author       Richard Mitsuk Lavitt, 7607877
+ * @version      2019-05-22 
+ *
+ * PURPOSE: Simple date book.
+ */
 public class A1QBMitsukLavitt7607877 {
     private static final String[] EVENT_NAMES = new String[] {
             "Battle at Wolf 359",
@@ -22,12 +33,14 @@ public class A1QBMitsukLavitt7607877 {
         initializeEvents(september);
         initializeEvents(october);
 
-        // set 10 random events per month
+        // Set 10 random events per month
         fillRandomEvents(september);
         fillRandomEvents(october);
 
 
         // Output
+
+        // September
         System.out.println();
         System.out.println("September");
         System.out.println("_________________________________");
@@ -39,6 +52,7 @@ public class A1QBMitsukLavitt7607877 {
         System.out.println("High-priority events:");
         printPriorityList(september);
 
+        // October
         System.out.println();
         System.out.println("October");
         System.out.println("_________________________________");
@@ -51,13 +65,6 @@ public class A1QBMitsukLavitt7607877 {
         printPriorityList(october);
 
         System.out.println();
-
-/*         for(int i = 0; i < september.length; i++) {
-            if(!september[i].isEmpty()){
-                System.out.println(september[i].toString());
-            }
-        } */
-
     }
 
     private static void printPriorityList(Event[] month) {
@@ -79,6 +86,7 @@ public class A1QBMitsukLavitt7607877 {
     private static void printCalendar(Event[] month, int firstOfMonth) {
         System.out.println("Sun  Mon  Tue  Wed  Thu  Fri  Sat");
 
+        // Add space to fill the week until the first of the month.
         for(int i = 0; i < firstOfMonth; i++) {
             System.out.print("     ");
         }
@@ -90,28 +98,21 @@ public class A1QBMitsukLavitt7607877 {
             int day = i + 1;
             String printedDay = Integer.toString(day);
 
+            // Asterisk the day if there is an event that day
             if(!month[i].isEmpty()) {
                 printedDay += "*";
             }
 
+            // Print the days in 5-character blocks including whitespace
             System.out.format("%-5s", printedDay);
+
+            // Move to the next line at the end of the week
             if(((day + firstOfMonth) % 7 == 0) || i == month.length) { 
                 System.out.println();
             }
         }
         System.out.println();
     }
-
-    /*private static String[] getCalendarRow(Event[] month, int startDay, int firstOfMonth) {
-        String[] row = new String[7];
-        for(int i = 0; i < 7 && i < month.length; i++) {
-            row[i] = Integer.toString(startDay + 1 + i);
-            if(!month[startDay + i].isEmpty()) {
-                row[i] += "*";
-            }
-        }
-        return row;
-    }*/
 
     private static void initializeEvents(Event[] month) {
         for(int i = 0; i < month.length; i++) {
@@ -154,7 +155,6 @@ public class A1QBMitsukLavitt7607877 {
 }
 
 class Event {
-
     private String startTime = "";
     private String name      = "";
     private int    priority  = 0;
