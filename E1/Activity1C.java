@@ -16,6 +16,20 @@ public class Activity1C {
 
       printInventory(inventory);
 
+      checkInventory(inventory);
+
+
+      sell(inventory[0], 91);
+      sell(inventory[1], 200);
+      sell(inventory[2], 100);
+      sell(inventory[3], 200);
+
+      printInventory(inventory);
+
+      checkInventory(inventory);
+
+      printInventory(inventory);
+
       order(inventory[0], 90);
       order(inventory[1], 1);
       order(inventory[2], 220);
@@ -25,6 +39,15 @@ public class Activity1C {
       printInventory(inventory);
 
       System.out.println("\nEnd of processing.");
+   }
+
+   public static void checkInventory(Item[] inventory) {
+      System.out.println("Checking inventory.");
+      for(int i = 0; i < inventory.length; i++) {
+         if(inventory[i].mustReorder()) {
+            order(inventory[i], 200);
+         }
+      }
    }
 
    public static void sell(Item item, int amount) {
@@ -65,12 +88,14 @@ class Item {
    private int size;
    private String code;
    private int quantity;
+   private int reorderQuantity;
 
    public Item(String name, int size, String code, int quantity) {
       this.name = name;
       this.size = size;
       this.code = code;
       this.quantity = quantity;
+      this.reorderQuantity = quantity / 4;
    }
 
    public String order(int amount) {
@@ -82,6 +107,10 @@ class Item {
       }
 
       return result;
+   }
+
+   public boolean mustReorder() {
+      return quantity < reorderQuantity;
    }
 
    public int sell(int amount) {
@@ -103,6 +132,7 @@ class Item {
       String result;
 
       result = "Item '" + name + "' size=" + size + "mm code='" + code;
+      result += "' reorder if quantity: < " + reorderQuantity;
       if (quantity >= 0) {
          result += " quantity=" + quantity;
       } else {
