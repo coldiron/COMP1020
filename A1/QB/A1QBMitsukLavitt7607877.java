@@ -1,11 +1,11 @@
 /**
- * A1QBMitsukLavitt7607877 
+ * A1QBMitsukLavitt7607877
  *
  * COMP 1020 SECTION D01
  * INSTRUCTOR    Safiur Mahdi
- * ASSIGNMENT    Assignment 1, question B
+ * ASSIGNMENT    Assignment 1, Question B
  * @author       Richard Mitsuk Lavitt, 7607877
- * @version      2019-05-22 
+ * @version      2019-05-22
  *
  * PURPOSE: Simple date book.
  */
@@ -15,6 +15,7 @@ public class A1QBMitsukLavitt7607877 {
         Event[] september = new Event[30];
         Event[] october   = new Event[31];
 
+        // Calculate the first day of each month
         int firstOfSeptember = (int)(Math.random() * 7);
         int firstOfOctober   = (firstOfSeptember + 30) % 7;
 
@@ -25,32 +26,28 @@ public class A1QBMitsukLavitt7607877 {
         fillRandomEvents(september);
         fillRandomEvents(october);
 
+        printAllViews(september, firstOfSeptember, "September");
+        printAllViews(october, firstOfOctober, "October");
 
-        // Output
-
-        // September
         System.out.println();
-        System.out.println("September");
+    }
+
+    private static void printAllViews(Event[] month, int firstOfMonth, String monthName) {
+        System.out.println();
+
+        System.out.println(monthName);
         System.out.println("_________________________________");
-        printCalendar(september, firstOfSeptember);
-        System.out.println();
-        System.out.println("Events:");
-        printList(september);
-        System.out.println();
-        System.out.println("High-priority events:");
-        printPriorityList(september);
+        printCalendar(month, firstOfMonth);
 
-        // October
         System.out.println();
-        System.out.println("October");
-        System.out.println("_________________________________");
-        printCalendar(october, firstOfOctober);
-        System.out.println();
+
         System.out.println("Events:");
-        printList(october);
+        printList(month);
+
         System.out.println();
+
         System.out.println("High-priority events:");
-        printPriorityList(october);
+        printPriorityList(month);
 
         System.out.println();
     }
@@ -70,7 +67,7 @@ public class A1QBMitsukLavitt7607877 {
                 System.out.println((i + 1) + ": " + month[i].toString());
             }
         }
-    }  
+    }
     private static void printCalendar(Event[] month, int firstOfMonth) {
         System.out.println("Sun  Mon  Tue  Wed  Thu  Fri  Sat");
 
@@ -81,7 +78,7 @@ public class A1QBMitsukLavitt7607877 {
 
         for(int i = 0; i < month.length; i++) {
             // We use both an integer and string version of the day of the month
-            // because we need to manipulate the string while still having access 
+            // because we need to manipulate the string while still having access
             // to the integer value.
             int day = i + 1;
             String printedDay = Integer.toString(day);
@@ -95,7 +92,7 @@ public class A1QBMitsukLavitt7607877 {
             System.out.format("%-5s", printedDay);
 
             // Move to the next line at the end of the week
-            if(((day + firstOfMonth) % 7 == 0) || i == month.length) { 
+            if((day + firstOfMonth) % 7 == 0) {
                 System.out.println();
             }
         }
@@ -121,19 +118,21 @@ public class A1QBMitsukLavitt7607877 {
                 "Meeting with boss",
                 "Buy new shoes"
         };
-        
         int filled = 0;
+
+        // While loop to fill the days
         while(filled < 10) {
             // Pick a random day
             int pos = (int)(Math.random() * (month.length));
+
             // Fill it with an event if it's empty
             if (month[pos].isEmpty()) {
-                String name = EVENT_NAMES[filled];
-                int priority = (int)(Math.random() * 3) + 1;
-                month[pos].update(randomTime(), name, priority);
+                month[pos].update(randomTime(),
+                                  EVENT_NAMES[filled],
+                                  ((int)(Math.random() * 3) + 1));
                 filled++;
             }
-        } 
+        }
     }
 
     // Generate a random time in the format of 12:59 PM
@@ -141,11 +140,12 @@ public class A1QBMitsukLavitt7607877 {
         String time;
 
         time = ((int)(Math.random() * 12) + 1) + ":" +
-               ((int)(Math.random() * 6)) + 
+               ((int)(Math.random() * 6)) +
                ((int)(Math.random() * 10));
+
         if(Math.random() < 0.5) {
             time += " PM";
-        } 
+        }
         else {
             time += " AM";
         }
@@ -154,6 +154,10 @@ public class A1QBMitsukLavitt7607877 {
     }
 }
 
+/** PURPOSE: Stores an event, which has a String name and start-time, and an int
+ *           priority. Initializes startTime and name with default values of "",
+ *           and the priority with 0.
+ */
 class Event {
     private String startTime = "";
     private String name      = "";
@@ -167,7 +171,7 @@ class Event {
         this.name      = name;
         this.priority  = priority;
     }
-    
+
     public void update(String startTime, String name, int priority) {
         this.startTime = startTime;
         this.name      = name;
@@ -191,8 +195,8 @@ class Event {
     }
 
     public boolean isEmpty() {
-        return name.isEmpty() && 
-               startTime.isEmpty() && 
+        return name.isEmpty() &&
+               startTime.isEmpty() &&
                priority == 0;
     }
 }
