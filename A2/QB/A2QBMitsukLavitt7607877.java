@@ -19,3 +19,32 @@ class A2QBMitsukLavitt7607877 {
         System.out.println("End of processing.");
     }
 }
+
+class Sentence {
+    private String text = "";
+    private int wordCount = 0;
+
+    public Sentence() {
+    }
+
+    public Sentence(String text) {
+        this.text = text;
+    }
+
+    public void setBody(String text) {
+        this.text = text;
+    }
+
+    public void add(String word) {
+        text.concat("" + word);
+        wordCount++;
+    }
+
+    public int getWordCount() {
+        return wordCount;
+    }
+
+    public String getBody() {
+        return text;
+    }
+}
