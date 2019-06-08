@@ -33,8 +33,8 @@ class A2QAMitsukLavitt7607877 {
         try {
             PrintWriter fileOut = new PrintWriter(new FileWriter(filename));
 
-            outputMedalsByEventType(medals, fileOut);
-            outputMedalsByCountry(medals, fileOut);
+            outputMedalCounter(medals, fileOut, "Event Type");
+            outputMedalCounter(medals, fileOut, "Country");
 
             fileOut.close();
         }
@@ -55,62 +55,38 @@ class A2QAMitsukLavitt7607877 {
         fileOut.println(output);
     }
 
-    private static void outputMedalsByEventType(ArrayList<Medal> medals, PrintWriter fileOut) {
-        ArrayList<EventType> events = new ArrayList<>();
+
+    private static void outputMedalCounter(ArrayList<Medal> medals, PrintWriter fileOut, String outputType) {
+        ArrayList<MedalCounter> medalCounters = new ArrayList<>();
 
         for(int i = 0; i < medals.size(); i++) {
-
-            int eventTypeIndex = -1;
-            for(int ei = 0; ei < events.size(); ei++) {
+            String name;
+            if(outputType.equals("Event Type")) {
+                name = medals.get(i).getEventType();
+            }
+            else {
+                name = medals.get(i).getCountry();
+            }
+            int medalCounterIndex = -1;
+            for(int c = 0; c < medalCounters.size(); c++) {
                 // Broken up for readability
-                if(events.get(ei).getName().equals(
-                medals.get(i).getEventType())) {
-                    eventTypeIndex = ei;
+                if(medalCounters.get(c).getName().equals(name)) {
+                    medalCounterIndex = c;
                 }
             }
 
-            if(eventTypeIndex == -1) {
-                events.add(new EventType(medals.get(i).getEventType()));
-                events.get(events.size() - 1).addMedal();
+            if(medalCounterIndex == -1) {
+                medalCounters.add(new MedalCounter(name));
+                medalCounters.get(medalCounters.size() - 1).addMedal();
             }
             else {
-                events.get(eventTypeIndex).addMedal();
+                medalCounters.get(medalCounterIndex).addMedal();
             }
         }
 
-        for(EventType event : events) {
-            dualOutputln("Event: " + event.getName(), fileOut);
-            dualOutputln("Medals: " + event.getMedals(), fileOut);
-        }
-    }
-
-    private static void outputMedalsByCountry(ArrayList<Medal> medals, PrintWriter fileOut) {
-        ArrayList<Country> countries = new ArrayList<>();
-
-        for(int i = 0; i < medals.size(); i++) {
-
-            int countryIndex = -1;
-            for(int c = 0; c < countries.size(); c++) {
-                // Broken up for readability
-                if(countries.get(c).getName()
-                .equals(
-                medals.get(i).getCountry())) {
-                    countryIndex = c;
-                }
-            }
-
-            if(countryIndex == -1) {
-                countries.add(new Country(medals.get(i).getCountry()));
-                countries.get(countries.size() - 1).addMedal();
-            }
-            else {
-                countries.get(countryIndex).addMedal();
-            }
-        }
-
-        for(Country country : countries) {
-            dualOutputln("Country: " + country.getName(), fileOut);
-            dualOutputln("Medals: " + country.getMedals(), fileOut);
+        for(MedalCounter medalCounter : medalCounters) {
+            dualOutputln(outputType + ": " + medalCounter.getName(), fileOut);
+            dualOutputln("Medals: " + medalCounter.getMedals(), fileOut);
         }
     }
 
@@ -159,7 +135,7 @@ class A2QAMitsukLavitt7607877 {
     private static void updateMedal(Medal medal, String lineContents, int lineNumber) {
         switch(lineNumber) {
             case 0:
-                medal.setCountry(lineContents);
+                medal.setMedalCounter(lineContents);
             case 1:
                 medal.setEventType(lineContents);
             case 2:
@@ -172,12 +148,19 @@ class MedalCounter {
     private String name = "";
     private int medals = 0;
 
+    public MedalCounter() {
+    }
+
+    public MedalCounter(String name) {
+        this.name = name;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
     public void addMedal() {
-        this.medals++;
+        medals++;
     }
 
     public int getMedals() {
@@ -189,24 +172,6 @@ class MedalCounter {
     }
 }
 
-class EventType extends MedalCounter {
-    public EventType() {
-    }
-
-    public EventType(String name) {
-        this.setName(name);
-    }
-}
-
-class Country extends MedalCounter {
-    public Country() {
-    }
-
-    public Country(String name) {
-        this.setName(name);
-    }
-}
-
 class Medal {
     private String country   = "";
     private String eventName = "";
@@ -215,7 +180,7 @@ class Medal {
     public Medal() {
     }
 
-    public void setCountry(String country) {
+    public void setMedalCounter(String country) {
         this.country = country;
     }
 

@@ -1,78 +1,78 @@
-Event: Fencing
+Event Type: Fencing
 Medals: 10
-Event: Rowing
+Event Type: Rowing
 Medals: 14
-Event: Athletics
+Event Type: Athletics
 Medals: 47
-Event: Diving
+Event Type: Diving
 Medals: 8
-Event: Swimming
+Event Type: Swimming
 Medals: 34
-Event: Canoe/Kayak - Flatwater
+Event Type: Canoe/Kayak - Flatwater
 Medals: 12
-Event: Gymnastics Artistic
+Event Type: Gymnastics Artistic
 Medals: 14
-Event: Synchronized Swimming
+Event Type: Synchronized Swimming
 Medals: 2
-Event: Volleyball
+Event Type: Volleyball
 Medals: 2
-Event: Water Polo
+Event Type: Water Polo
 Medals: 2
-Event: Sailing
+Event Type: Sailing
 Medals: 11
-Event: Canoe/Kayak - Slalom
+Event Type: Canoe/Kayak - Slalom
 Medals: 4
-Event: Weightlifting
+Event Type: Weightlifting
 Medals: 15
-Event: Judo
+Event Type: Judo
 Medals: 14
-Event: Equestrian
+Event Type: Equestrian
 Medals: 6
-Event: Taekwondo
+Event Type: Taekwondo
 Medals: 8
-Event: Cycling - Road
+Event Type: Cycling - Road
 Medals: 4
-Event: Boxing
+Event Type: Boxing
 Medals: 11
-Event: Shooting
+Event Type: Shooting
 Medals: 15
-Event: Hockey
+Event Type: Hockey
 Medals: 2
-Event: Gymnastics Rhythmic
+Event Type: Gymnastics Rhythmic
 Medals: 2
-Event: Wrestling
+Event Type: Wrestling
 Medals: 18
-Event: Cycling - Track
+Event Type: Cycling - Track
 Medals: 10
-Event: Badminton
+Event Type: Badminton
 Medals: 5
-Event: Beach Volleyball
+Event Type: Beach Volleyball
 Medals: 2
-Event: Tennis
+Event Type: Tennis
 Medals: 4
-Event: Cycling - Mountain Bike
+Event Type: Cycling - Mountain Bike
 Medals: 2
-Event: Cycling - BMX
+Event Type: Cycling - BMX
 Medals: 2
-Event: Softball
+Event Type: Softball
 Medals: 1
-Event: Trampoline
+Event Type: Trampoline
 Medals: 2
-Event: Archery
+Event Type: Archery
 Medals: 4
-Event: Table Tennis
+Event Type: Table Tennis
 Medals: 4
-Event: Football
+Event Type: Football
 Medals: 2
-Event: Basketball
+Event Type: Basketball
 Medals: 2
-Event: Triathlon
+Event Type: Triathlon
 Medals: 2
-Event: Handball
+Event Type: Handball
 Medals: 2
-Event: Baseball
+Event Type: Baseball
 Medals: 1
-Event: Modern Pentathlon
+Event Type: Modern Pentathlon
 Medals: 2
 Country: ITA
 Medals: 8
