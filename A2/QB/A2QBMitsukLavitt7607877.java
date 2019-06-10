@@ -3,12 +3,12 @@
  *
  * COMP 1020 SECTION D01
  * INSTRUCTOR    Safiur Mahdi
- * ASSIGNMENT    Assignment 2, Question A
+ * ASSIGNMENT    Assignment 2, Question B
  * @author       Richard Mitsuk Lavitt, 7607877
- * @version      2019-05-21
+ * @version      2019-06-10
  *
- * PURPOSE: Tallies  and outputs Olympic medals categorized by event and
- *          by country.
+ * PURPOSE: Parses and stores sentences from an input file.
+ *          Calculates readability index and outputs sentence statistics.
  */
 
 import java.io.*;
@@ -66,19 +66,21 @@ class A2QBMitsukLavitt7607877 {
     }
 
     private static double computeARI(ArrayList<Sentence> sentences) {
-        double ARI        = 0.0;
-        double wordCount     = 0.0;
-        double letterCount   = 0.0;
+        double ARI         = 0.0;
+        double wordCount   = 0.0;
+        double letterCount = 0.0;
 
         for(Sentence sentence : sentences) {
             wordCount += sentence.getWordCount();
             letterCount += sentence.getLetterCount();
         }
+
         ARI = ((4.71 * (letterCount/wordCount)) 
             + (0.5 * (wordCount/sentences.size())) 
             - 21.43);
 
         ARI = (double) Math.round(ARI * 10d) / 10d;
+
         return ARI;
     }
 

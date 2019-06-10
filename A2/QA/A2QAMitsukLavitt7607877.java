@@ -5,7 +5,7 @@
  * INSTRUCTOR    Safiur Mahdi
  * ASSIGNMENT    Assignment 2, Question A
  * @author       Richard Mitsuk Lavitt, 7607877
- * @version      2019-05-21
+ * @version      2019-06-07
  *
  * PURPOSE: Tallies  and outputs Olympic medals categorized by event and
  *          by country.
