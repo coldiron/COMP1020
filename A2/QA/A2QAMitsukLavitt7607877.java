@@ -7,7 +7,7 @@
  * @author       Richard Mitsuk Lavitt, 7607877
  * @version      2019-06-07
  *
- * PURPOSE: Tallies  and outputs Olympic medals categorized by event and
+ * PURPOSE: Tallies and outputs Olympic medals categorized by event and
  *          by country.
  */
 
@@ -29,6 +29,9 @@ class A2QAMitsukLavitt7607877 {
         System.out.println("End of processing.");
     }
 
+    /**
+     * PURPOSE: Outputs an array list of medals in two formats
+     */
     private static void outputMedals(ArrayList<Medal> medals, String filename) {
         try {
             PrintWriter fileOut = new PrintWriter(new FileWriter(filename));
@@ -56,9 +59,17 @@ class A2QAMitsukLavitt7607877 {
     }
 
 
+    /**
+     * Outputs medals grouped by either country or by event type. Calls dualOutputln() 
+     * to output to both file and stdout.
+     * @param medals
+     * @param fileOut
+     * @param outputType
+     */
     private static void outputMedalCounter(ArrayList<Medal> medals, PrintWriter fileOut, String outputType) {
         ArrayList<MedalCounter> medalCounters = new ArrayList<>();
 
+        // Checks each medal and adds it to a counter depending on which grouping type was requested
         for(int i = 0; i < medals.size(); i++) {
             String name;
 
@@ -92,6 +103,7 @@ class A2QAMitsukLavitt7607877 {
     }
 
 
+    // Loads medals into an arraylist from a file
     private static ArrayList<Medal> loadMedals(String filename) {
         BufferedReader input;
         String lineContents;
@@ -114,6 +126,8 @@ class A2QAMitsukLavitt7607877 {
                 updateMedal(medalList.get(medalNumber), lineContents, lineNumber);
 
                 if(lineNumber == 2) {
+                    // Resets line counter if we're at the end of the stats for a medal,
+                    // so we're able to get stats for the next medal
                     lineNumber = 0;
                     medalNumber++;
                 }
@@ -121,8 +135,9 @@ class A2QAMitsukLavitt7607877 {
                     lineNumber++;
                 }
 
-            lineContents = input.readLine();
+                lineContents = input.readLine();
             }
+
             input.close();
         }
         catch (IOException ioe) {

@@ -29,19 +29,25 @@ class A2QBMitsukLavitt7607877 {
         outputSentences(sentences, sentences.size() - 5, sentences.size());
 
         System.out.println();
+
         System.out.println("Summary statistics: ");
         System.out.println("Letters: " + getAllLetterCount(sentences));
         System.out.println("Words: " + getAllWordCount(sentences));
         System.out.println("Sentences: " + (sentences.size() - 1));
-
         System.out.println("Readability: " + computeARI(sentences));
 
         System.out.println("End of processing.");
     }
 
+    /**
+     * Outputs text of sentences in an ArrayList in a given range.
+     * @param sentences ArrayList of sentences to be output
+     * @param start     Index of beginning of range
+     * @param end       Index of end of range
+     */
     private static void outputSentences(ArrayList<Sentence> sentences, int start, int end) {
         for(int i = start; i < end; i++) {
-            System.out.println("(" + (i + 1) + "): " + sentences.get(i).getText());
+            System.out.println("(" + (i + 1) + "): " + sentences.get(i));
         }
     }
 
@@ -65,6 +71,12 @@ class A2QBMitsukLavitt7607877 {
         return wordCount;
     }
 
+    /**
+     * Computes Automated Readability Index given an ArrayList of sentences.
+     * 
+     * @param sentences List of sentences to be checked
+     * @return double value of calculated ARI, rouneded to 2 decimal places.
+     */
     private static double computeARI(ArrayList<Sentence> sentences) {
         double ARI         = 0.0;
         double wordCount   = 0.0;
@@ -84,28 +96,46 @@ class A2QBMitsukLavitt7607877 {
         return ARI;
     }
 
+    /**
+     * Loads a given file full of sentences into an ArrayList of Sentence
+     * objects.
+     * @param filename Filename containing sentences
+     * @return         ArrayList of sentences
+     */
     private static ArrayList<Sentence> loadSentences(String filename) {
         BufferedReader input;
         ArrayList<Sentence> sentences = new ArrayList<>();
 
         try {
             input = new BufferedReader(new FileReader(filename));
+            // Current line being read through
             String currentLine;
+            // Array of characters to be checked one-by-one for whitespace,
+            // end of sentence, etc.
             char[] currentLineChars;
+            // current word
             String word = "";
+            // Index of current sentence in arraylist being checked
             int    currentSentence = 0;
 
             currentLine = input.readLine();
 
+            // Iterate over lines in filereader
             sentences.add(new Sentence());
             while(currentLine != null) {
+                // Break down line into chars
                 currentLineChars = currentLine.toCharArray();
                 word += " ";
 
                 for(char c : currentLineChars) {
+                    // As long as the current char isn't whitespace, add it to
+                    // the current word.
                     if(!Character.isWhitespace(c)) {
                         word += c;
 
+                        // End the word if we reach certain characters. Trims excess
+                        // whitespace from the ends, adds a new sentence, and resets the 
+                        // current word to blank.
                         if(c == '?' || c == '!' || c == '.') {
                             sentences.get(currentSentence).add(word);
                             sentences.get(currentSentence).trim();
@@ -114,6 +144,8 @@ class A2QBMitsukLavitt7607877 {
                             word = " ";
                         }
                     }
+                    // If the current character *is* whitespace, ends the word and resets the
+                    // current word to blank.
                     else {
                         sentences.get(currentSentence).add(word);
                         word = " ";
@@ -179,5 +211,9 @@ class Sentence {
 
     public String getText() {
         return text;
+    }
+
+    public String toString() {
+        return this.getText();
     }
 }
