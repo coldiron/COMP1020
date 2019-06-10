@@ -16,13 +16,42 @@ import java.util.ArrayList;
 
 class A2QBMitsukLavitt7607877 {
     public static void main(String args[]) {
+        ArrayList<Sentence> sentences = new ArrayList<>();
+
+        sentences = loadSentences("aqb.txt");
+
         System.out.println("End of processing.");
+    }
+
+    private static ArrayList<Sentence> loadSentences(String filename) {
+        BufferedReader input;
+        ArrayList<Sentence> sentences = new ArrayList<>();
+
+        sentences.add(new Sentence());
+
+        try {
+            input = new BufferedReader(new FileReader(filename));
+
+            lineContents = input.readLine();
+            while(lineContents != null) {
+                lineContents = input.readLine();
+            }
+
+            input.close();
+        }
+        catch (IOException ioe) {
+            System.err.println(ioe.getMessage());
+            ioe.printStackTrace();
+        }
+
+        return sentences;
     }
 }
 
 class Sentence {
     private String text = "";
     private int wordCount = 0;
+    private int letterCount = 0;
 
     public Sentence() {
     }
@@ -31,12 +60,13 @@ class Sentence {
         this.text = text;
     }
 
-    public void setBody(String text) {
+    public void setText(String text) {
         this.text = text;
     }
 
-    public void add(String word) {
+    public void add(String word, int letterCount) {
         text.concat("" + word);
+        this.letterCount += letterCount;
         wordCount++;
     }
 
@@ -44,7 +74,11 @@ class Sentence {
         return wordCount;
     }
 
-    public String getBody() {
+    public int getLetterCount() {
+        return letterCount;
+    }
+
+    public String getText() {
         return text;
     }
 }

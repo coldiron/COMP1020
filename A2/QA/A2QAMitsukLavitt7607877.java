@@ -61,15 +61,16 @@ class A2QAMitsukLavitt7607877 {
 
         for(int i = 0; i < medals.size(); i++) {
             String name;
+
             if(outputType.equals("Event Type")) {
                 name = medals.get(i).getEventType();
             }
             else {
                 name = medals.get(i).getCountry();
             }
+
             int medalCounterIndex = -1;
             for(int c = 0; c < medalCounters.size(); c++) {
-                // Broken up for readability
                 if(medalCounters.get(c).getName().equals(name)) {
                     medalCounterIndex = c;
                 }
@@ -135,7 +136,7 @@ class A2QAMitsukLavitt7607877 {
     private static void updateMedal(Medal medal, String lineContents, int lineNumber) {
         switch(lineNumber) {
             case 0:
-                medal.setMedalCounter(lineContents);
+                medal.setCountry(lineContents);
             case 1:
                 medal.setEventType(lineContents);
             case 2:
@@ -180,7 +181,7 @@ class Medal {
     public Medal() {
     }
 
-    public void setMedalCounter(String country) {
+    public void setCountry(String country) {
         this.country = country;
     }
 
