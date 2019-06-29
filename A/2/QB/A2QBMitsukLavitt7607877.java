@@ -11,11 +11,13 @@
  *          Calculates readability index and outputs sentence statistics.
  */
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 class A2QBMitsukLavitt7607877 {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         ArrayList<Sentence> sentences = new ArrayList<>();
 
         sentences = loadSentences("a2b.txt");
@@ -29,14 +31,18 @@ class A2QBMitsukLavitt7607877 {
         outputSentences(sentences, sentences.size() - 5, sentences.size());
 
         System.out.println();
+        printSummaryStatistics(sentences);
 
+        System.out.println();
+        System.out.println("End of processing.");
+    }
+
+    private static void printSummaryStatistics(ArrayList<Sentence> sentences) {
         System.out.println("Summary statistics: ");
         System.out.println("Letters: " + getAllLetterCount(sentences));
         System.out.println("Words: " + getAllWordCount(sentences));
-        System.out.println("Sentences: " + (sentences.size() - 1));
+        System.out.println("Sentences: " + (sentences.size()));
         System.out.println("Readability: " + computeARI(sentences));
-
-        System.out.println("End of processing.");
     }
 
     /**
@@ -73,12 +79,12 @@ class A2QBMitsukLavitt7607877 {
 
     /**
      * Computes Automated Readability Index given an ArrayList of sentences.
-     * 
+     *
      * @param sentences List of sentences to be checked
-     * @return double value of calculated ARI, rouneded to 2 decimal places.
+     * @return          double value of calculated ARI, rouneded to 2 decimal places.
      */
     private static double computeARI(ArrayList<Sentence> sentences) {
-        double ARI         = 0.0;
+        double ari         = 0.0;
         double wordCount   = 0.0;
         double letterCount = 0.0;
 
@@ -87,13 +93,13 @@ class A2QBMitsukLavitt7607877 {
             letterCount += sentence.getLetterCount();
         }
 
-        ARI = ((4.71 * (letterCount/wordCount)) 
-            + (0.5 * (wordCount/sentences.size())) 
+        ari = ((4.71 * (letterCount / wordCount))
+            + (0.5 * (wordCount / sentences.size()))
             - 21.43);
 
-        ARI = (double) Math.round(ARI * 10d) / 10d;
+        ari = (double) Math.round(ari * 10d) / 10d;
 
-        return ARI;
+        return ari;
     }
 
     /**
@@ -110,31 +116,29 @@ class A2QBMitsukLavitt7607877 {
             input = new BufferedReader(new FileReader(filename));
             // Current line being read through
             String currentLine;
-            // Array of characters to be checked one-by-one for whitespace,
-            // end of sentence, etc.
-            char[] currentLineChars;
-            // current word
+
+            // current word being built
             String word = "";
+
             // Index of current sentence in arraylist being checked
-            int    currentSentence = 0;
+            int currentSentence = 0;
 
             currentLine = input.readLine();
 
             // Iterate over lines in filereader
             sentences.add(new Sentence());
             while(currentLine != null) {
-                // Break down line into chars
-                currentLineChars = currentLine.toCharArray();
                 word += " ";
 
-                for(char c : currentLineChars) {
+                for(int i = 0; i < currentLine.length(); i++) {
+                    char c = currentLine.charAt(i);
                     // As long as the current char isn't whitespace, add it to
                     // the current word.
                     if(!Character.isWhitespace(c)) {
                         word += c;
 
                         // End the word if we reach certain characters. Trims excess
-                        // whitespace from the ends, adds a new sentence, and resets the 
+                        // whitespace from the ends, adds a new sentence, and resets the
                         // current word to blank.
                         if(c == '?' || c == '!' || c == '.') {
                             sentences.get(currentSentence).add(word);
@@ -151,14 +155,14 @@ class A2QBMitsukLavitt7607877 {
                         word = " ";
                     }
                 }
-                        
+
                 currentLine = input.readLine();
             }
 
             input.close();
 
             // Remove a blank sentence added at the end of file
-            if(sentences.get(sentences.size() - 1).getText().equals("")) {
+            if(sentences.get(sentences.size() - 1).equals("")) {
                 sentences.remove(sentences.size() - 1);
             }
         }
@@ -211,6 +215,10 @@ class Sentence {
 
     public String getText() {
         return text;
+    }
+
+    public boolean equals(String text) {
+        return this.text.equals(text);
     }
 
     public String toString() {

@@ -50,7 +50,7 @@ class A2QAMitsukLavitt7607877 {
     /**
      * PURPOSE: Outputs a string to both a file and stdout with a newline
      * 
-     * @param output String to be output
+     * @param output  String to be output
      * @param fileOut file to be output to
      */
     private static void dualOutputln(String output, PrintWriter fileOut) {
@@ -62,9 +62,9 @@ class A2QAMitsukLavitt7607877 {
     /**
      * Outputs medals grouped by either country or by event type. Calls dualOutputln() 
      * to output to both file and stdout.
-     * @param medals
-     * @param fileOut
-     * @param outputType
+     * @param medals     ArrayList of medals
+     * @param fileOut    PrintWriter to be output to
+     * @param outputType either "Event Type" or "Country"
      */
     private static void outputMedalCounter(ArrayList<Medal> medals, PrintWriter fileOut, String outputType) {
         ArrayList<MedalCounter> medalCounters = new ArrayList<>();
@@ -82,7 +82,7 @@ class A2QAMitsukLavitt7607877 {
 
             int medalCounterIndex = -1;
             for(int c = 0; c < medalCounters.size(); c++) {
-                if(medalCounters.get(c).getName().equals(name)) {
+                if(medalCounters.get(c).nameEquals(name)) {
                     medalCounterIndex = c;
                 }
             }
@@ -150,12 +150,17 @@ class A2QAMitsukLavitt7607877 {
 
     private static void updateMedal(Medal medal, String lineContents, int lineNumber) {
         switch(lineNumber) {
-            case 0:
-                medal.setCountry(lineContents);
-            case 1:
-                medal.setEventType(lineContents);
-            case 2:
-                medal.setEventName(lineContents);
+        case 0:
+            medal.setCountry(lineContents);
+            break;
+        case 1:
+            medal.setEventType(lineContents);
+            break;
+        case 2:
+            medal.setEventName(lineContents);
+            break;
+        default:
+            System.err.println("Error: Invalid medal line number");
         }
     }
 }
@@ -169,6 +174,10 @@ class MedalCounter {
 
     public MedalCounter(String name) {
         this.name = name;
+    }
+
+    public boolean nameEquals(String name) {
+        return this.name.equals(name);
     }
 
     public void setName(String name) {

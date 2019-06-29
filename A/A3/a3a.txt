@@ -1,0 +1,21 @@
+list
+add,3,loaf of bread
+add,2,jug of milk
+list
+buy,2,loaf of bread
+add,4,loaf of bread
+buy,3,jug of milk
+buy,1,stick of butter
+list
+buy,5,loaf of bread
+buy,2,banana
+list
+add,1,apple
+add,2,banana
+add,3,cauliflower
+add,4,durian
+buy,5,kumquat
+add,5,kumquat
+buy,4,kumquat
+buy,1,kumquat
+list
