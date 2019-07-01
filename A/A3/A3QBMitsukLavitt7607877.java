@@ -1,45 +1,74 @@
 /**
- * A3QAMitsukLavitt7607877
+ * A3QBMitsukLavitt7607877
  *
  * COMP 1020 SECTION D01
  * INSTRUCTOR    Safiur Mahdi
- * ASSIGNMENT    Assignment 2, Question B
+ * ASSIGNMENT    Assignment 3, Question B
  * @author       Richard Mitsuk Lavitt, 7607877
- * @version      2019-06-28
+ * @version      2019-07-01
  *
- * PURPOSE: Parses and stores sentences from an input file.
- *          Calculates readability index and outputs sentence statistics.
+ * PURPOSE: Plots points on scatter plots, calculates basic statistics,
+ *          and prints plots complete with a least-squares regression line of
+ *          best fit.
  */
 
-// TODO - get rid of 21 in y
 // TODO - comment both assignment files
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 
 class A3QBMitsukLavitt7607877 {
     public static void main(String[] args) {
-        ScatterPlot plotOne = new ScatterPlot();
-        ScatterPlot plotTwo = new ScatterPlot();
+        int[] xRange = new int[] {0, 40};
+        int[] yRange = new int[] {1, 20};
 
-        plotOne = processPlotFile("a3plot1.txt", plotOne);
-        plotTwo = processPlotFile("a3plot2.txt", plotTwo);
+        ScatterPlot plotOne = new ScatterPlot(xRange, yRange);
+        ScatterPlot plotTwo = new ScatterPlot(xRange, yRange);
 
-        plotOne.addRegressionLine();
-        plotTwo.addRegressionLine();
+        plotOne.processFile("a3plot1.txt");
+        plotTwo.processFile("a3plot2.txt");
 
-        System.out.println("Plot one: \n");
-        plotOne.print();
+        System.out.println("\nPlot one:");
+        System.out.println(plotOne);
 
-        System.out.println("\nPlot two: \n");
-        plotTwo.print();
+        System.out.println("\nPlot two:");
 
-        System.out.println("End of processing.");
+        System.out.println(plotTwo);
+
+        System.out.println("\nEnd of processing.");
+    }
+}
+
+class ScatterPlot {
+    private Point[][] points;
+
+    private int[] xRange, yRange;
+    private int n;
+
+    // xBar and yBar are instance vars because they are basic 
+    // statistics that potential additions to this program might
+    // need access to.
+    private float xBar, yBar;
+
+
+
+    public ScatterPlot(int[] xRange, int[] yRange) {
+        this.xRange = xRange;
+        this.yRange = yRange;
+
+        this.n = 0;
+
+        points = new Point[(xRange[1] + 1)][(yRange[1] + 1)];
+
+        for(int x = xRange[0]; x <= xRange[1]; x++) {
+            for(int y = yRange[0]; y <= yRange[1]; y++) {
+                points[x][y] = new Point();
+            }
+        }
     }
 
-    private static ScatterPlot processPlotFile(String filename, ScatterPlot plot) {
+    public void processFile(String filename) {
         BufferedReader input;
 
         try {
@@ -47,122 +76,96 @@ class A3QBMitsukLavitt7607877 {
             String currentLine = input.readLine();
 
             while(currentLine != null) {
-                processLine(currentLine, plot);
+                processLine(currentLine);
                 currentLine = input.readLine();
             }
 
             input.close();
+
+            computeMeans();
+            addRegressionLine();
         }
         catch (IOException ioe) {
             System.err.println(ioe.getMessage());
             ioe.printStackTrace();
         }
-
-        return plot;
     }
 
-    private static void processLine(String currentLine, ScatterPlot plot) {
+    private void processLine(String currentLine) {
         try {
-            String[] line     = currentLine.split(" ", 2);
+            String[] line = currentLine.split(" ", 2);
             int x = Integer.parseInt(line[0]);
             int y = Integer.parseInt(line[1]);
             
-            plot.addPoint(x, y);
+            addPoint(x, y);
         }
         catch(NumberFormatException e) {
         }
     }
-}
 
-class ScatterPlot {
-    private Point[][] points = new Point[41][21];
-
-    private float xBar;
-    private float yBar;
-
-    private int    n;
-
-
-    public ScatterPlot() {
-        this.xBar = 0;
-        this.yBar = 0;
-
-        for(int x = 0; x < 41; x++) {
-            for(int y = 0; y < 21; y++) {
-                points[x][y] = new Point();
-            }
-        }
-    }
-
-    public void addPoint(int x, int y) {
-        if(isValid(x, y)) {
+    private void addPoint(int x, int y) {
+        if(inRange(x, y)) {
             points[x][y].add();
             n++;
         }
     }
 
-    private static boolean isValid(int x, int y) {
-        return x >= 0 && x <= 40 && y >= 1 && y <= 20;
+    private boolean inRange(int x, int y) {
+        return xRange[0] <= x && x <= xRange[1] &&
+               yRange[0] <= y && y <= yRange[1];
+/*         return x >= xRange[0] && 
+               x <= xRange[1] && 
+               y >= yRange[0] && 
+               y <= yRange[1]; */
     }
 
-    public void addRegressionLine() {
-        int yHat;
-        float slope;
+    private void addRegressionLine() {
+        int     yHat;
+        float   slope = computeSlope();
 
-        slope = computeSlope();
+        for(int x = 0; x <= xRange[1]; x++) {
+            /* I initially used this method to calculate yHat:
 
-        for(int x = 0; x < 41; x++) {
-            yHat = Math.round(yBar + (slope * (x - xBar)));
-            if(yHat > 0 && yHat <= 20) {
+               yHat = Math.round(yBar + (slope * (x - xBar)));
+
+               While the above method provides a more accurate 
+               regression line, directly casting to int appears
+               to better match the example in the assignment 
+               instructions. */
+            yHat = (int) (yBar + (slope * (x - xBar)));
+
+            if(inRange(x, yHat)) {
                 points[x][yHat].addToRegression();
             }
         }
     }
+
     private float computeSlope() {
         float topSum    = 0;
         float bottomSum = 0;
-        float slope;
 
-        computeMeans();
 
-        for(int x = 0; x < 41; x++) {
-            for(int y = 0; y < 21; y++) {
+        for(int x = xRange[0]; x <= xRange[1]; x++) {
+            for(int y = yRange[0]; y <= yRange[1]; y++) {
                 if(points[x][y].hasData()) {
-                    topSum += topInstanceValue(x, y);
-                    bottomSum += bottomInstanceValue(x);
+                    topSum += x * y;
+                    bottomSum += x * x;
                 }
             }
         }
 
-        return topSum / bottomSum;
+        return (topSum - (n * xBar * yBar)) 
+               / 
+               (bottomSum - (n * xBar * xBar));
 
-                /*
-        slope = topSum - (n * xBar * yBar)) 
-                /
-                (bottomSum - (n * (xBar * xBar)));
-                */
-    }
-
-    private float topInstanceValue(int x, int y) {
-        //float topIValue = (x * y);
-        float topIValue = (x * y)  - (n * xBar * yBar);
-
-        return topIValue;
-    }
-
-    private float bottomInstanceValue(int x) {
-        //float bottomIValue = (x * x);
-        float bottomIValue = (x * x) - (n * (xBar * xBar));
-        
-        return bottomIValue;
     }
 
     private void computeMeans() {
-        int      xSum  = 0,
-                 ySum  = 0;
+        int   xSum = 0,
+              ySum = 0;
 
-        for(int x = 0; x < 41; x++) {
-            for(int y = 0; y < 21; y++) {
+        for(int x = xRange[0]; x <= xRange[1]; x++) {
+            for(int y = yRange[0]; y <= yRange[1]; y++) {
                 if(points[x][y].hasData()) {
                     xSum += x;
                     ySum += y;
@@ -170,55 +173,69 @@ class ScatterPlot {
             }
         }
 
-        this.xBar = (float) xSum / n;
-        this.yBar = (float) ySum / n;
-
+        xBar = (float) xSum / n;
+        yBar = (float) ySum / n;
     }
 
-    public void print() {
-        for(int y = 20; y >= 0; y--) {
-            System.out.print("\n|");
-            for(int x = 0;x < 41; x++) {
-                System.out.print(points[x][y].toString());
+
+    public String toString() {
+        String string = new String();
+
+        for(int y = yRange[1]; y >= yRange[0]; y--) {
+
+            // Add y-axis
+            string += "\n|";
+
+            for(int x = xRange[0];x <= xRange[1]; x++) {
+                string += points[x][y];
             }
         }
-        System.out.println("\n+-----------------------------------------");
+
+        // Add x-axis
+        string += "\n+";
+        for(int x = xRange[0]; x <= xRange[1]; x++) {
+            string +="-";
+        }
+
+        return string;
     }
 }
 
 class Point {
-    boolean hasData = false;
-    boolean inRegressionLine = false;
+    private int type;
 
     public Point() {
+        type = 0;
     }
 
     public void add() {
-        hasData = true;
+        type = (type > 1) ? 3 : 1;
     }
 
     public void addToRegression() {
-        inRegressionLine = true;
+        type = (hasData()) ? 3 : 2;
     }
 
+    // If type is odd, the point contains data
     public boolean hasData() {
-        return hasData;
+        return (type & 1) == 1;
     }
 
     public String toString() {
-        String point;
+        String point = new String();
 
-        if(hasData && inRegressionLine) {
-            point = "*";
-        }
-        else if(inRegressionLine) {
-            point = "-";
-        }
-        else if(hasData) {
-            point = "X";
-        }
-        else {
-            point = " ";
+        switch(type) {
+            case 0:
+                point = " ";
+                break;
+            case 1:
+                point = "X";
+                break;
+            case 2: 
+                point = "-";
+                break;
+            case 3:
+                point = "*";
         }
 
         return point;
