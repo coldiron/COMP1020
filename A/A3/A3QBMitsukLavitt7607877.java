@@ -169,7 +169,7 @@ class ScatterPlot {
             yHat = (int) (yBar + (slope * (x - xBar)));
 
             if(inRange(x, yHat)) {
-                points[x][yHat].addToRegression();
+                points[x][yHat].addLine();
             }
         }
     }
@@ -239,18 +239,19 @@ class ScatterPlot {
 
 
 /**
- * Represents an individual point on a scatter plot. the int "type" stores
- * what the point represents:
- * 0 - empty point
- * 1 - data point
- * 2 - regression line segment without data point
- * 3 - regression line segment with data point
- */
+ * Represents an individual point on a scatter plot.
+ * Wraps a char and provides associated helper methods. */
 class Point {
-    private int type;
+    char point;
+
+    private static final char EMPTY = ' ';
+    private static final char DATA  = 'X';
+    private static final char LINE = '-';
+    private static final char DATA_AND_LINE = '*';
+
 
     public Point() {
-        type = 0;
+        point = EMPTY;
     }
 
     /**
@@ -259,51 +260,40 @@ class Point {
      * it marks it as containing both.
      */
     public void add() {
-        type = (type > 1) ? 3 : 1;
+        point = hasLine() ? DATA_AND_LINE : DATA;
     }
 
     /** 
      * Sets the point as containing a regression line segment.
      * If there is also data in the point, it marks it as containing both.
      */
-    public void addToRegression() {
-        type = (hasData()) ? 3 : 2;
+    public void addLine() {
+        point = hasData() ? DATA_AND_LINE : LINE;
     }
 
     /**
      * Checks if the point contains data.
-     * Values 1 and 3 indicate a data point, so this method checks
-     * if the value is an odd number, and returns true if it is.
      */
     public boolean hasData() {
-        return (type & 1) == 1;
+        return point == DATA || point == DATA_AND_LINE; 
     }
 
     /**
-     * The data in the point represented as a string.
+     * Checks if the point belongs to regression line.
+     */
+    private boolean hasLine() {
+        return point == LINE || point == DATA_AND_LINE;
+    }
+
+    /**
+     * Boxes char in a string to for faster/easier concat when
+     * building scatter plot
      * Blank:        " "
      * Data point:   "X"
      * Line segment: "-"
      * Both:         "*"
      */
     public String toString() {
-        String point = new String();
-
-        switch(type) {
-            case 0:
-                point = " ";
-                break;
-            case 1:
-                point = "X";
-                break;
-            case 2: 
-                point = "-";
-                break;
-            case 3:
-                point = "*";
-                break;
-        }
-
-        return point;
+        return String.valueOf(point);
     }
 }

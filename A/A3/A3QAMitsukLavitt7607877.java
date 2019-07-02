@@ -171,7 +171,6 @@ class ShoppingList {
      */
     private int find(String name) {
         int index = -1;
-
         int i = 0;
         while(i < list.size() && index < 0) {
             if(list.get(i).nameIs(name)) {
@@ -179,7 +178,6 @@ class ShoppingList {
             }
             i++;
         }
-
         return index;
     }
 }
@@ -211,11 +209,12 @@ class Item {
         this.quantity -= quantity;
     }
 
-    // If the number of items on a list are 0 or less, 
+    // If the number of items on a list is 0 or less, 
     // it can be removed.
     public boolean notNeeded() {
         return quantity < 1;
     }
+
     public String toString() {
         return quantity + " - " + name;
     }
