@@ -5,10 +5,9 @@
  * INSTRUCTOR    Safiur Mahdi
  * ASSIGNMENT    Assignment 4, Question B
  * @author       Richard Mitsuk Lavitt, 7607877
- * @version      2019-07-01
+ * @version      2019-07-05
  *
- * PURPOSE: Parses and stores sentences from an input file.
- *          Calculates readability index and outputs sentence statistics.
+ * PURPOSE: Takes orders for a cafe and calculates prices, etc.
  */
 
 import java.io.BufferedReader;
@@ -20,7 +19,7 @@ class A4QBMitsukLavitt7607877 {
     public static void main(String[] args) {
         CafeOrderList orders = new CafeOrderList();
 
-        System.out.println("CafeOrder up!\n");
+        System.out.println("\nOrder up!\n");
 
         orders.processFile("a4b.txt");
 
@@ -37,6 +36,10 @@ class A4QBMitsukLavitt7607877 {
     }
 }
 
+/**
+ * Collection class to keep track of orders in a cafe. Provides helper methods
+ * to compute total price, etc.
+ */
 class CafeOrderList {
     private ArrayList<CafeOrder> orders;
 
@@ -69,6 +72,16 @@ class CafeOrderList {
         System.out.println("Done.");
     }
 
+    /** Input is in the format:
+     * 
+     * Coffee,3,medium
+     * Donut,7,0.89,chocolate
+     * Pop,5,large,Splat! Cola
+     * Sandwich,1,3.89,mystery meat,37-grain whole wheat
+     * 
+     * This method parses the input line-by-line and creates the appropriate
+     * object for each. We assume there are no errors in the input.
+     */
     private void processLine(String currentLine) {
         String[] order = currentLine.split(",", 5);
 
@@ -112,6 +125,9 @@ class CafeOrderList {
         }
     }
 
+    /**
+     * Ascending price selection sort.
+     */
     public void sort() {
         int minSorted;
 
@@ -172,6 +188,11 @@ class CafeOrderList {
                " total items\n"; 
     }
 
+    /**
+     * Counts given class of objects in orders list
+     * @param c class, in format Klass.class
+     * @return integer count of objects found in list
+     */
     private int count(Class<?> c) {
         int count = 0;
 
@@ -184,6 +205,9 @@ class CafeOrderList {
         return count;
     }
 
+    /**
+     * Calculates the grand total of all items in the list after tax
+     */
     private double grandTotal() {
         double total = 0.0;
 
@@ -221,6 +245,11 @@ abstract class CafeOrder {
 
     }
 
+    /**
+     * Delegates the second column in our output to subclasses. Items will
+     * differ in how they're described; pops have a brand, sandwiches have
+     * bread and filling, etc.
+     */
     protected abstract String secondColumnString();
 
     public boolean cheaperThan(CafeOrder o) {
@@ -239,11 +268,14 @@ abstract class CafeOrder {
         return 0.0;
     }
 
+    /** Provides an easy way to format prices to two decimal places */
     public static String formatCents(Object price) {
         return String.format("%.2f", price);
     }
 
-    // Adjustable column widths for tabular output
+    /** Adjustable column widths for tabular output. This is public because 
+     * it's also used in our CafeOrderList class.
+     */
     public static String columnFormats(int column) {
         String[] formats = { "%4s", "%52s", "%7s", "%9s", "%6s" };
 
@@ -297,6 +329,7 @@ class Donut extends Food {
     public double getTax() {
         double tax = super.getTax();
 
+        // Donuts are only taxable if there are fewer than 6
         if(quantity < 6) {
             tax = calcTax();
         }
@@ -314,6 +347,9 @@ abstract class Drink extends CafeOrder {
         setPrice();
     }
 
+    /** There are 3 sizes each of coffee and pop, but prices differ.
+     *  getPrices() is defined per-subclass.
+     */
     protected abstract double[] getPrices();
 
     private void setPrice() {
@@ -351,7 +387,6 @@ class Pop extends Drink {
 }
 
 class Coffee extends Drink {
-
     public Coffee(int quantity, String size) {
         super(quantity, size);
     }

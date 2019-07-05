@@ -5,10 +5,9 @@
  * INSTRUCTOR    Safiur Mahdi
  * ASSIGNMENT    Assignment 4, Question A
  * @author       Richard Mitsuk Lavitt, 7607877
- * @version      2019-07-01
+ * @version      2019-07-05
  *
- * PURPOSE: Parses and stores sentences from an input file.
- *          Calculates readability index and outputs sentence statistics.
+ * PURPOSE: Takes orders for a cafe and calculates prices, etc.
  */
 
 import java.io.BufferedReader;
