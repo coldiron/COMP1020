@@ -1,0 +1,10 @@
+Coffee,3,medium
+Donut,7,0.89,chocolate
+Donut,3,1.19,eclair
+Coffee,1,large
+Coffee,2,large
+Coffee,7,small
+Donut,6,0.89,baker's choice
+Donut,1,1.10,lemon buster
+Donut,120,0.15,petite oeufs
+Coffee,10,medium
