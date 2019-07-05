@@ -158,7 +158,6 @@ abstract class Order {
     protected double price;
 
     protected static final String[] COLUMN_FORMATS = { "%4s", "%52s", "%7s" };
-    protected static final double TAX_RATE = 0.07;
 
     public Order(){
     }
@@ -185,11 +184,23 @@ abstract class Order {
         return quantity;
     }
 
+    protected double getTax() {
+        return 0.0;
+    }
+
+}
+
+abstract class Food extends Order {
+    protected static final double TAX_RATE = 0.07;
+
+    public Food(int quantity, double price) {
+        super(quantity, price);
+    }
 
     public double getTax() {
         double tax = 0.0;
         
-        if(this instanceof Sandwich || (this instanceof Donut && quantity < 6)) {
+        if(this instanceof Sandwich || quantity < 6) {
             tax = calcTax();
         }
 
@@ -199,15 +210,6 @@ abstract class Order {
     private double calcTax() {
         return quantity * price * TAX_RATE;
     }
-}
-
-abstract class Food extends Order {
-
-    public Food(int quantity, double price) {
-        super(quantity, price);
-    }
-
-
 }
 
 abstract class Drink extends Order {
