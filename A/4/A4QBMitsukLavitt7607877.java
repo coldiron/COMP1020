@@ -72,7 +72,7 @@ class OrderList {
     }
 
     public String totalsToString() {
-        return String.format("%73s", "Grand total: $") + OrderList.roundCents(grandTotal()) + "\n" +
+        return String.format("%73s", "Grand total: $") + String.format("%.2f", grandTotal()) + "\n" +
                String.format("%4s", count(Donut.class))    + " total donuts\n" +
                String.format("%4s", count(Sandwich.class)) + " total sandwiches\n" +
                String.format("%4s", count(Pop.class))      + " total pops\n" +
@@ -106,8 +106,7 @@ class OrderList {
         for(int i = 0; i < orders.size(); i++) {
             minSorted = i;
             for(int j = i + 1; j < orders.size(); j++) {
-                int difference = Double.compare(orders.get(j).totalPrice(), orders.get(i).totalPrice());
-                if(difference < 0) {
+                if(orders.get(j).cheaperThan(orders.get(minSorted))) {
                     minSorted = j;
                 }
             }
@@ -116,6 +115,7 @@ class OrderList {
             orders.set(minSorted, temp);
         }
     }
+
 
     public double grandTotal() {
         double total = 0.0;
@@ -146,7 +146,8 @@ class OrderList {
     public String toString() {
         String string = new String();
         for(Order o: orders) {
-            string += o.toString() + ", total: $" + roundCents(o.totalPrice()) + "\n";
+            string += o.toString() + ", total: " +
+            String.format("%7s", "$" + String.format("%.2f", o.totalPrice())) + "\n";
         }
         return string;
     }
@@ -157,7 +158,6 @@ abstract class Order {
     protected double price;
 
     protected static final String[] COLUMN_FORMATS = { "%4s", "%52s", "%7s" };
-
     protected static final double TAX_RATE = 0.07;
 
     public Order(){
@@ -173,6 +173,10 @@ abstract class Order {
 
     public abstract String toString();
 
+    public boolean cheaperThan(Order o) {
+        return totalPrice() < o.totalPrice();
+    }
+
     public double totalPrice() {
         return (price * quantity) + getTax();
     }
@@ -181,22 +185,11 @@ abstract class Order {
         return quantity;
     }
 
-    public double getTax() {
-        return 0.0;
-    }
-}
-
-abstract class Food extends Order {
-
-    public Food(int quantity, double price) {
-        this.quantity = quantity;
-        this.price = price;
-    }
 
     public double getTax() {
-        double tax = super.getTax();
+        double tax = 0.0;
         
-        if(this instanceof Sandwich || quantity < 6) {
+        if(this instanceof Sandwich || (this instanceof Donut && quantity < 6)) {
             tax = calcTax();
         }
 
@@ -208,12 +201,21 @@ abstract class Food extends Order {
     }
 }
 
+abstract class Food extends Order {
+
+    public Food(int quantity, double price) {
+        super(quantity, price);
+    }
+
+
+}
+
 abstract class Drink extends Order {
     protected String size;
 
 
     public Drink(int quantity, String size) {
-        this.quantity = quantity;
+        super(quantity);
         this.size = size;
     }
 
@@ -240,7 +242,7 @@ class Donut extends Food {
     public String toString() {
         return String.format(COLUMN_FORMATS[0], quantity) +
                String.format(COLUMN_FORMATS[1]," " + flavour + " donut(s) @" ) + 
-               String.format(COLUMN_FORMATS[2], "$" + price);
+               String.format(COLUMN_FORMATS[2], "$" + String.format("%.2f", price));
     }
 
 }
@@ -258,7 +260,7 @@ class Sandwich extends Food {
     public String toString() {
         return String.format(COLUMN_FORMATS[0], quantity) + 
                String.format(COLUMN_FORMATS[1], filling + " sandwich(es) on " + bread + " @") +
-               String.format(COLUMN_FORMATS[2], "$" + price);
+               String.format(COLUMN_FORMATS[2], "$" + String.format("%.2f", price));
     }
 }
 
@@ -280,7 +282,7 @@ class Pop extends Drink {
     public String toString() {
         return String.format(COLUMN_FORMATS[0], quantity) + 
                String.format(COLUMN_FORMATS[1], size + " " + brand + " drink(s)" + " @") +
-               String.format(COLUMN_FORMATS[2], "$" + price);
+               String.format(COLUMN_FORMATS[2], "$" + String.format("%.2f", price));
     }
 }
 
@@ -296,10 +298,9 @@ class Coffee extends Drink {
         super.setPrice(COFFEE_PRICES);
     }
 
-
     public String toString() {
         return String.format(COLUMN_FORMATS[0], quantity) +
                String.format(COLUMN_FORMATS[1], " " + size + " coffee(s) @") +
-               String.format(COLUMN_FORMATS[2], "$" + price);
+               String.format(COLUMN_FORMATS[2], "$" + String.format("%.2f", price));
     }
 }
