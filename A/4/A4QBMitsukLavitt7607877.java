@@ -18,33 +18,30 @@ import java.util.ArrayList;
 
 class A4QBMitsukLavitt7607877 {
     public static void main(String[] args) {
-        OrderList orders = new OrderList();
+        CafeOrderList orders = new CafeOrderList();
 
-        System.out.println("Order up:\n");
+        System.out.println("CafeOrder up!\n");
 
         orders.processFile("a4b.txt");
 
         System.out.println("\nComplete list:\n");
-
         System.out.println(orders);
 
         System.out.println("\nSorted list:\n");
-
         orders.sort();
-    
         System.out.println(orders);
-        
+
         System.out.println(orders.totalsToString());
 
         System.out.println("\nEnd of processing.");
     }
 }
 
-class OrderList {
-    private ArrayList<Order> orders;
+class CafeOrderList {
+    private ArrayList<CafeOrder> orders;
 
-    public OrderList() {
-        orders = new ArrayList<Order>();
+    public CafeOrderList() {
+        orders = new ArrayList<CafeOrder>();
     }
 
     public void processFile(String filename) {
@@ -68,16 +65,8 @@ class OrderList {
             System.err.println(e.getMessage());
             e.printStackTrace();
         }
-        System.out.println("Done.");
-    }
 
-    public String totalsToString() {
-        return String.format("%73s", "Grand total: $") + String.format("%.2f", grandTotal()) + "\n" +
-               String.format("%4s", count(Donut.class))    + " total donuts\n" +
-               String.format("%4s", count(Sandwich.class)) + " total sandwiches\n" +
-               String.format("%4s", count(Pop.class))      + " total pops\n" +
-               String.format("%4s", count(Coffee.class))   + " total coffees\n" +
-               String.format("%4s", count(Order.class))    + " total items\n"; 
+        System.out.println("Done.");
     }
 
     private void processLine(String currentLine) {
@@ -85,52 +74,108 @@ class OrderList {
 
         switch(order[0]) {
             case "Coffee":
-                orders.add(new Coffee(Integer.parseInt(order[1]), order[2]));
+                orders.add(
+                    new Coffee(
+                        Integer.parseInt(order[1]), 
+                        order[2]
+                    )
+                );
                 break;
             case "Pop":
-                orders.add(new Pop(Integer.parseInt(order[1]), order[2], order[3]));
+                orders.add(
+                    new Pop(
+                        Integer.parseInt(order[1]), 
+                        order[2],
+                        order[3]
+                    )
+                );
                 break;
             case "Donut":
-                orders.add(new Donut(Integer.parseInt(order[1]), Double.parseDouble(order[2]), order[3]));
+                orders.add(
+                    new Donut(
+                        Integer.parseInt(order[1]), 
+                        Double.parseDouble(order[2]),
+                        order[3]
+                    )
+                );
                 break;
             case "Sandwich":
-                orders.add(new Sandwich(Integer.parseInt(order[1]), Double.parseDouble(order[2]), order[3], order[4]));
+                orders.add(
+                    new Sandwich(
+                        Integer.parseInt(order[1]),
+                        Double.parseDouble(order[2]),
+                        order[3],
+                        order[4]
+                    )
+                );
                 break;
         }
     }
 
     public void sort() {
-        Order temp;
         int minSorted;
 
         for(int i = 0; i < orders.size(); i++) {
             minSorted = i;
+
             for(int j = i + 1; j < orders.size(); j++) {
                 if(orders.get(j).cheaperThan(orders.get(minSorted))) {
                     minSorted = j;
                 }
             }
-            temp = orders.get(i);
-            orders.set(i, orders.get(minSorted));
-            orders.set(minSorted, temp);
+
+            swap(i, minSorted);
         }
     }
 
+    private void swap(int i, int j) {
+        CafeOrder temp = orders.get(i);
 
-    public double grandTotal() {
-        double total = 0.0;
-
-        for(Order o: orders) {
-            total += o.totalPrice();
-        }
-
-        return total;
+        orders.set(i, orders.get(j));
+        orders.set(j, temp);
     }
 
-    public int count(Class<?> c) {
+    public String toString() {
+        String string = new String();
+        string += listHeader() + "\n";
+        for(CafeOrder o: orders) {
+            string += o + "\n";
+        }
+        return string;
+    }
+
+    private static String listHeader() {
+        return String.format(CafeOrder.columnFormats(0), "Qty") +
+               String.format(CafeOrder.columnFormats(1), "Item @") +
+               String.format(CafeOrder.columnFormats(2), "Price") +
+               String.format(CafeOrder.columnFormats(3), "") +
+               String.format(CafeOrder.columnFormats(4), "Total"); 
+    }
+
+    public String totalsToString() {
+        return String.format("%72s", "Grand total: $") + 
+               CafeOrder.formatCents(grandTotal()) + "\n" + 
+
+               String.format("%4s", count(Donut.class)) +
+               " total donuts\n" +
+
+               String.format("%4s", count(Sandwich.class)) +
+               " total sandwiches\n" +
+
+               String.format("%4s", count(Pop.class)) +
+               " total pops\n" +
+
+               String.format("%4s", count(Coffee.class)) +
+               " total coffees\n" +
+
+               String.format("%4s", count(CafeOrder.class)) +
+               " total items\n"; 
+    }
+
+    private int count(Class<?> c) {
         int count = 0;
 
-        for(Order o: orders) {
+        for(CafeOrder o: orders) {
             if(c.isInstance(o)) {
                 count += o.getQuantity();
             }
@@ -139,40 +184,46 @@ class OrderList {
         return count;
     }
 
-    public static double roundCents(double price) {
-        return Math.round(price * 100.0) / 100.0;
-    }
+    private double grandTotal() {
+        double total = 0.0;
 
-    public String toString() {
-        String string = new String();
-        for(Order o: orders) {
-            string += o.toString() + ", total: " +
-            String.format("%7s", "$" + String.format("%.2f", o.totalPrice())) + "\n";
+        for(CafeOrder o: orders) {
+            total += o.totalPrice();
         }
-        return string;
+
+        return total;
     }
 }
 
-abstract class Order {
+abstract class CafeOrder {
     protected int quantity;
     protected double price;
 
-    protected static final String[] COLUMN_FORMATS = { "%4s", "%52s", "%7s" };
 
-    public Order(){
+    public CafeOrder(){
     }
 
-    public Order(int quantity) {
+    public CafeOrder(int quantity) {
         this.quantity = quantity;
     }
-    public Order(int quantity, double price) {
+
+    public CafeOrder(int quantity, double price) {
         this.quantity = quantity;
         this.price = price;
     }
 
-    public abstract String toString();
+    public String toString() {
+        return String.format(columnFormats(0), quantity) + 
+               String.format(columnFormats(1), this.secondColumnString()) +
+               String.format(columnFormats(2), "$" + formatCents(price)) +
+               String.format(columnFormats(3), ", total: ") +
+               String.format(columnFormats(4), "$" + formatCents(totalPrice()));
 
-    public boolean cheaperThan(Order o) {
+    }
+
+    protected abstract String secondColumnString();
+
+    public boolean cheaperThan(CafeOrder o) {
         return totalPrice() < o.totalPrice();
     }
 
@@ -188,65 +239,28 @@ abstract class Order {
         return 0.0;
     }
 
+    public static String formatCents(Object price) {
+        return String.format("%.2f", price);
+    }
+
+    // Adjustable column widths for tabular output
+    public static String columnFormats(int column) {
+        String[] formats = { "%4s", "%52s", "%7s", "%9s", "%6s" };
+
+        return formats[column];
+    }
 }
 
-abstract class Food extends Order {
+abstract class Food extends CafeOrder {
     protected static final double TAX_RATE = 0.07;
 
     public Food(int quantity, double price) {
         super(quantity, price);
     }
 
-    public double getTax() {
-        double tax = 0.0;
-        
-        if(this instanceof Sandwich || quantity < 6) {
-            tax = calcTax();
-        }
-
-        return tax;
-    }
-
-    private double calcTax() {
+    protected double calcTax() {
         return quantity * price * TAX_RATE;
     }
-}
-
-abstract class Drink extends Order {
-    protected String size;
-
-
-    public Drink(int quantity, String size) {
-        super(quantity);
-        this.size = size;
-    }
-
-    protected void setPrice(double[] prices) {
-        switch(size) {
-            case "small":
-                price = prices[0];
-            case "medium":
-                price = prices[1];
-            case "large":
-                price = prices[2];
-        }
-    }
-}
-
-class Donut extends Food {
-    private String flavour;
-
-    public Donut(int quantity, double price, String flavour) {
-        super(quantity, price);
-        this.flavour = flavour;
-    }
-
-    public String toString() {
-        return String.format(COLUMN_FORMATS[0], quantity) +
-               String.format(COLUMN_FORMATS[1]," " + flavour + " donut(s) @" ) + 
-               String.format(COLUMN_FORMATS[2], "$" + String.format("%.2f", price));
-    }
-
 }
 
 class Sandwich extends Food {
@@ -259,50 +273,94 @@ class Sandwich extends Food {
         this.bread = bread;
     }
 
-    public String toString() {
-        return String.format(COLUMN_FORMATS[0], quantity) + 
-               String.format(COLUMN_FORMATS[1], filling + " sandwich(es) on " + bread + " @") +
-               String.format(COLUMN_FORMATS[2], "$" + String.format("%.2f", price));
+    protected String secondColumnString() {
+        return filling + " sandwich(es) on " + bread + " @";
+    }
+
+    public double getTax() {
+        return calcTax();
+    }
+}
+
+class Donut extends Food {
+    private String flavour;
+
+    public Donut(int quantity, double price, String flavour) {
+        super(quantity, price);
+        this.flavour = flavour;
+    }
+
+    protected String secondColumnString() {
+        return flavour + " donut(s) @";
+    }
+
+    public double getTax() {
+        double tax = super.getTax();
+
+        if(quantity < 6) {
+            tax = calcTax();
+        }
+
+        return tax;
+    }
+}
+
+abstract class Drink extends CafeOrder {
+    protected String size;
+
+    public Drink(int quantity, String size) {
+        super(quantity);
+        this.size = size;
+        setPrice();
+    }
+
+    protected abstract double[] getPrices();
+
+    private void setPrice() {
+        double[] prices = this.getPrices();
+
+        switch(size) {
+            case "small":
+                price = prices[0];
+                break;
+            case "medium":
+                price = prices[1];
+                break;
+            case "large":
+                price = prices[2];
+                break;
+        }
     }
 }
 
 class Pop extends Drink {
     private String brand;
 
-    private static final double[] POP_PRICES = { 1.79, 2.09, 2.49 };
-
     public Pop(int quantity, String size, String brand) {
         super(quantity, size);
         this.brand = brand;
-        setPrice();
     }
 
-    private void setPrice() {
-        super.setPrice(POP_PRICES);
-    }
+    protected double[] getPrices() {
+        return new double[] { 1.79, 2.09, 2.49 };
+    } 
 
-    public String toString() {
-        return String.format(COLUMN_FORMATS[0], quantity) + 
-               String.format(COLUMN_FORMATS[1], size + " " + brand + " drink(s)" + " @") +
-               String.format(COLUMN_FORMATS[2], "$" + String.format("%.2f", price));
+    protected String secondColumnString() {
+        return size + " " + brand + " pop(s)" + " @";
     }
 }
 
 class Coffee extends Drink {
-    private static final double[] COFFEE_PRICES = { 1.39, 1.69, 1.99 };
 
     public Coffee(int quantity, String size) {
         super(quantity, size);
-        setPrice();
     }
 
-    private void setPrice() {
-        super.setPrice(COFFEE_PRICES);
-    }
+    protected double[] getPrices() {
+        return new double[] { 1.39, 1.69, 1.99 };
+    } 
 
-    public String toString() {
-        return String.format(COLUMN_FORMATS[0], quantity) +
-               String.format(COLUMN_FORMATS[1], " " + size + " coffee(s) @") +
-               String.format(COLUMN_FORMATS[2], "$" + String.format("%.2f", price));
+    protected String secondColumnString() {
+        return size + " coffee(s) @";
     }
 }

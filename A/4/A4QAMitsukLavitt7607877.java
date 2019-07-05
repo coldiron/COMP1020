@@ -28,9 +28,14 @@ class A4QAMitsukLavitt7607877 {
 
         System.out.println(orders);
         
-        System.out.println("Total quantity of donuts: " + orders.count(Donut.class));
-        System.out.println("Total quantity of coffees: " + orders.count(Coffee.class));
-        System.out.println("Grand total for all orders: $" + OrderList.roundCents(orders.grandTotal()));
+        System.out.println("Total quantity of donuts: " +
+                            orders.count(Donut.class));
+
+        System.out.println("Total quantity of coffees: " + 
+                            orders.count(Coffee.class));
+
+        System.out.println("Grand total for all orders: $" + 
+                            OrderList.roundCents(orders.grandTotal()));
         
         System.out.println("\nEnd of processing.");
     }
@@ -71,10 +76,15 @@ class OrderList {
         String[] order = currentLine.split(",", 4);
 
         if(order[0].equals("Coffee")) {
-            orders.add(new Coffee(Integer.parseInt(order[1]), order[2]));
+            orders.add(
+                new Coffee(Integer.parseInt(order[1]), order[2])
+            );
         }
         else if(order[0].equals("Donut")) {
-            orders.add(new Donut(Integer.parseInt(order[1]), Double.parseDouble(order[2]), order[3]));
+            orders.add(
+                new Donut(Integer.parseInt(order[1]), 
+                Double.parseDouble(order[2]), order[3])
+            );
         }
     }
 
@@ -107,7 +117,8 @@ class OrderList {
     public String toString() {
         String string = new String();
         for(Order o: orders) {
-            string += o.toString() + ", total: $" + roundCents(o.totalPrice()) + "\n";
+            string += o.toString() + ", total: $" + 
+                      roundCents(o.totalPrice()) + "\n";
         }
         return string;
     }
