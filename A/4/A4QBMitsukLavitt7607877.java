@@ -28,7 +28,7 @@ class A4QBMitsukLavitt7607877 {
 
         System.out.println("\nSorted list:\n");
         orders.sort();
-        System.out.println(orders);
+        System.out.print(orders);
 
         System.out.println(orders.totalsToString());
 
@@ -72,7 +72,8 @@ class CafeOrderList {
         System.out.println("Done.");
     }
 
-    /** Input is in the format:
+    /** 
+     * Input is in the format:
      * 
      * Coffee,3,medium
      * Donut,7,0.89,chocolate
@@ -126,66 +127,77 @@ class CafeOrderList {
     }
 
     /**
-     * Ascending price selection sort.
+     * Ascending price insertion sort.
      */
     public void sort() {
-        int minSorted;
-
         for(int i = 0; i < orders.size(); i++) {
-            minSorted = i;
+            CafeOrder order = orders.get(i);
 
-            for(int j = i + 1; j < orders.size(); j++) {
-                if(orders.get(j).cheaperThan(orders.get(minSorted))) {
-                    minSorted = j;
-                }
+            int j = i - 1;
+            while(j >= 0 && order.cheaperThan(orders.get(j))) {
+                orders.set(j + 1, orders.get(j));
+                j--;
             }
-
-            swap(i, minSorted);
+            
+            orders.set(j + 1, order);
         }
-    }
-
-    private void swap(int i, int j) {
-        CafeOrder temp = orders.get(i);
-
-        orders.set(i, orders.get(j));
-        orders.set(j, temp);
     }
 
     public String toString() {
         String string = new String();
         string += listHeader() + "\n";
+
         for(CafeOrder o: orders) {
             string += o + "\n";
         }
+        
+        string += divider() + "\n";
         return string;
     }
 
     private static String listHeader() {
-        return String.format(CafeOrder.columnFormats(0), "Qty") +
-               String.format(CafeOrder.columnFormats(1), "Item @") +
-               String.format(CafeOrder.columnFormats(2), "Price") +
-               String.format(CafeOrder.columnFormats(3), "") +
-               String.format(CafeOrder.columnFormats(4), "Total"); 
+        String header = String.format(CafeOrder.columnFormats(0), "Qty") +
+                        String.format(CafeOrder.columnFormats(1), "Item") +
+                        String.format(CafeOrder.columnFormats(2), " @ Price") +
+                        String.format(CafeOrder.columnFormats(3), "") +
+                        String.format(CafeOrder.columnFormats(4), "Total") +"\n";
+
+        header += divider(); 
+
+        return header;
+    }
+
+    private static String divider() {
+        return "-".repeat(CafeOrder.rowLength() + 1);
     }
 
     public String totalsToString() {
-        return String.format("%72s", "Grand total: $") + 
-               CafeOrder.formatCents(grandTotal()) + "\n" + 
+        String fullRowFormat = "%" + (CafeOrder.rowLength() - 5) + "s";
 
-               String.format("%4s", count(Donut.class)) +
-               " total donuts\n" +
+        return String.format(fullRowFormat, "Grand total: $") + grandTotal() + "\n" + 
+               divider() + "\n" +
 
-               String.format("%4s", count(Sandwich.class)) +
-               " total sandwiches\n" +
+               String.format(CafeOrder.columnFormats(0), count(Donut.class)) + 
+               String.format(CafeOrder.columnFormats(1), "donut(s)") + "\n" +
 
-               String.format("%4s", count(Pop.class)) +
-               " total pops\n" +
+               String.format(CafeOrder.columnFormats(0), count(Sandwich.class)) +
+               String.format(CafeOrder.columnFormats(1), "sandwich(es)") + "\n" +
 
-               String.format("%4s", count(Coffee.class)) +
-               " total coffees\n" +
+               String.format(CafeOrder.columnFormats(0), count(Food.class)) +
+               String.format(CafeOrder.columnFormats(1), "food(s)") + "\n\n" +
 
-               String.format("%4s", count(CafeOrder.class)) +
-               " total items\n"; 
+               String.format(CafeOrder.columnFormats(0), count(Pop.class)) + 
+               String.format(CafeOrder.columnFormats(1), "pop(s)") + "\n" +
+
+               String.format(CafeOrder.columnFormats(0), count(Coffee.class)) +
+               String.format(CafeOrder.columnFormats(1), "coffee(s)") + "\n" +
+
+               String.format(CafeOrder.columnFormats(0), count(Drink.class)) +
+               String.format(CafeOrder.columnFormats(1), "drink(s)") + "\n\n" +
+
+               String.format(CafeOrder.columnFormats(0), count(CafeOrder.class)) +
+               String.format(CafeOrder.columnFormats(1), "item(s)") + "\n" +
+               divider() + "\n"; 
     }
 
     /**
@@ -208,14 +220,14 @@ class CafeOrderList {
     /**
      * Calculates the grand total of all items in the list after tax
      */
-    private double grandTotal() {
+    private String grandTotal() {
         double total = 0.0;
 
         for(CafeOrder o: orders) {
             total += o.totalPrice();
         }
 
-        return total;
+        return CafeOrder.formatCents(total);
     }
 }
 
@@ -239,7 +251,7 @@ abstract class CafeOrder {
     public String toString() {
         return String.format(columnFormats(0), quantity) + 
                String.format(columnFormats(1), this.secondColumnString()) +
-               String.format(columnFormats(2), "$" + formatCents(price)) +
+               String.format(columnFormats(2), " @ $" + formatCents(price)) +
                String.format(columnFormats(3), ", total: ") +
                String.format(columnFormats(4), "$" + formatCents(totalPrice()));
 
@@ -268,16 +280,33 @@ abstract class CafeOrder {
         return 0.0;
     }
 
-    /** Provides an easy way to format prices to two decimal places */
-    public static String formatCents(Object price) {
+    /** 
+     * Provides an easy way to format prices to two decimal places.
+     */
+    public static String formatCents(double price) {
         return String.format("%.2f", price);
     }
 
-    /** Adjustable column widths for tabular output. This is public because 
+    /**
+     * Calculates the length of a full row of Order.toString() for use in 
+     * table formatting.
+     */
+    public static int rowLength() {
+        int rowLength = 0;
+
+        for(int i = 0; i <= 4; i++) {
+            rowLength += String.format(columnFormats(i), "").length();
+        }
+
+        return rowLength;
+    }
+
+    /** 
+     * Adjustable column widths for tabular output. This is public because 
      * it's also used in our CafeOrderList class.
      */
     public static String columnFormats(int column) {
-        String[] formats = { "%4s", "%52s", "%7s", "%9s", "%6s" };
+        String[] formats = { "%4s", "%52s", "%7s", "%9s", "%7s" };
 
         return formats[column];
     }
@@ -306,7 +335,7 @@ class Sandwich extends Food {
     }
 
     protected String secondColumnString() {
-        return filling + " sandwich(es) on " + bread + " @";
+        return filling + " sandwich(es) on " + bread;
     }
 
     public double getTax() {
@@ -323,7 +352,7 @@ class Donut extends Food {
     }
 
     protected String secondColumnString() {
-        return flavour + " donut(s) @";
+        return flavour + " donut(s)";
     }
 
     public double getTax() {
@@ -347,8 +376,9 @@ abstract class Drink extends CafeOrder {
         setPrice();
     }
 
-    /** There are 3 sizes each of coffee and pop, but prices differ.
-     *  getPrices() is defined per-subclass.
+    /** 
+     * There are 3 sizes each of coffee and pop, but prices differ.
+     * getPrices() is defined per-subclass.
      */
     protected abstract double[] getPrices();
 
@@ -382,7 +412,7 @@ class Pop extends Drink {
     } 
 
     protected String secondColumnString() {
-        return size + " " + brand + " pop(s)" + " @";
+        return size + " " + brand + " pop(s)";
     }
 }
 
@@ -396,6 +426,6 @@ class Coffee extends Drink {
     } 
 
     protected String secondColumnString() {
-        return size + " coffee(s) @";
+        return size + " coffee(s)";
     }
 }

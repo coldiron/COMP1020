@@ -3,19 +3,25 @@ public class Exercise8 {
         System.out.println("Ackermann's Function");
         System.out.println("--------------------");
         System.out.println("A(m, n):");
-        System.out.println("If m == 0,             => return n + 1");
-        System.out.println("If m  > 0, and n == 0, => return A(m - 1, 1)");
-        System.out.println("If m  > 0, and n >  0, => return A(m - 1, A(m, n - 1))\n");
+        System.out.println("If m == 0 ............ -> return n + 1 ............... -> " + new Ackermann(0, 9));
+        System.out.println("If m  > 0, and n == 0, -> return A(m - 1, 1) ......... -> " + new Ackermann(2, 0));
+        System.out.println("If m  > 0, and n >  0, -> return A(m - 1, A(m, n - 1)) -> " + new Ackermann(2, 1));
 
+        System.out.print("\n" + new AckermannTable(3, 4));
 
-        System.out.print(Ackermann.table(3, 4));
         System.out.println("\nEnd of processing.");
     }
 }
 
-class Ackermann {
+class AckermannTable {
+    int mMax, nMax;
 
-    public static String table(int mMax, int nMax) {
+    public AckermannTable(int mMax, int nMax) {
+        this.mMax = mMax;
+        this.nMax = nMax;
+    }
+
+    public String toString() {u
         return recursiveTable("%5s|", mMax, nMax, 0, 0);
     }
 
@@ -23,9 +29,9 @@ class Ackermann {
         String output = new String();
         
         if(m == 0) {
-            output += "Table format (rows m, columns n):\n";
+            output += "Ackermann function table, implemented using recursion\n";
             output += tableDivider(format, nMax);
-            output += tableHeader(format, nMax);
+            output += header(format, nMax);
         }
 
         output+= tableRow(format, nMax, m, n);
@@ -42,10 +48,10 @@ class Ackermann {
         String output = new String();
 
         if(n == 0) {
-            output += String.format(format, m);
+            output += String.format(format, "m=" + m);
         }
 
-        output += String.format(format, ackermannFunction(m, n));
+        output += String.format(format, new Ackermann(m, n).getValue());
 
         if(n < nMax) {
             output+= tableRow(format, nMax, m, n + 1);
@@ -54,22 +60,21 @@ class Ackermann {
         return output;
     }
 
-    private static String tableHeader(String format, int nMax) {
-        return recursiveTableHeader(format, nMax, 0);
+    private static String header(String format, int nMax) {
+        return recursiveHeader(format, nMax, 0);
     }
 
-    private static String recursiveTableHeader(String format, int nMax, int n) {
+    private static String recursiveHeader(String format, int nMax, int n) {
         String output = new String();
 
-
         if(n == 0) {
-            output += String.format(format, "M\\N");
+            output += String.format(format, "m\\n");
         }
 
-        output += String.format(format, n);
+        output += String.format(format, "n=" + n);
 
         if(n < nMax) {
-            output += recursiveTableHeader(format, nMax, n + 1);
+            output += recursiveHeader(format, nMax, n + 1);
         }
         else {
             output += tableDivider(format, nMax);
@@ -82,37 +87,65 @@ class Ackermann {
         int length = String.format(format, "1").length();
         length = (nMax + 2) * length;
 
-        return "\n" + recursiveTableDivider("", length, 0);
+        return "\n" + recursiveRepeat("-", length, 0) + "\n";
     }
 
-    private static String recursiveTableDivider(String divider, int length, int pos) {
-        divider = "-";
-
+    private static String recursiveRepeat(String string, int length, int pos) {
         if(pos < length) {
-            divider += recursiveTableDivider(divider, length, pos + 1);
+            string += recursiveRepeat(string, length, pos + 1);
         }
-        else {
-            divider += "\n";
-        }
-        return divider;
+
+        return string;
     }
 
-    private static int ackermannFunction(int m, int n) {
-        int functionReturn = 0;
-        if(m >= 0 && n >= 0) {
-            if(m == 0) {
-                functionReturn = n+1;
-            }
-            else if(m > 0 && n == 0) {
-                functionReturn = ackermannFunction(m - 1, 1);
-            }
-            else if(m > 0 && n > 0) {
-                functionReturn = ackermannFunction(m - 1, ackermannFunction(m, n - 1));
-            }
+}
+class Ackermann {
+    private int m, n, value;
+
+    public Ackermann(int m, int n) {
+        this.m = m;
+        this.n = n;
+        validate();
+        this.value = A(m, n);
+    }
+
+    private void validate() {
+        if(m < 0 || n < 0) {
+            throw new IllegalArgumentException(
+                "Ackermann's function requires nonnegative input."
+            );
         }
-        else {
-            System.err.println("Ackermann's function requires nonnegative input.");
+    }
+
+    public int getM() {
+        return m;
+    }
+
+    public int getN() {
+        return n;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String toString() {
+        return "A(" + m + ", " + n + "): " + value;
+    }
+
+    protected static int A(int m, int n) {
+        int functionReturn = -1; 
+
+        if(m == 0) {
+            functionReturn = n+1;
         }
+        else if(m > 0 && n == 0) {
+            functionReturn = A(m - 1, 1);
+        }
+        else if(m > 0 && n > 0) {
+            functionReturn = A(m - 1, A(m, n - 1));
+        }
+
         return functionReturn;
     }
 
