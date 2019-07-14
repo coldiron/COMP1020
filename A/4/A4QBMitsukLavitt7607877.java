@@ -19,8 +19,6 @@ class A4QBMitsukLavitt7607877 {
     public static void main(String[] args) {
         CafeOrderList orders = new CafeOrderList();
 
-        System.out.println("\nOrder up!\n");
-
         orders.processFile("a4b.txt");
 
         System.out.println("\nComplete list:\n");
@@ -30,7 +28,7 @@ class A4QBMitsukLavitt7607877 {
         orders.sort();
         System.out.print(orders);
 
-        System.out.println(orders.totalsToString());
+        System.out.println(orders.totals());
 
         System.out.println("\nEnd of processing.");
     }
@@ -82,6 +80,12 @@ class CafeOrderList {
      * 
      * This method parses the input line-by-line and creates the appropriate
      * object for each. We assume there are no errors in the input.
+     * 
+     * The assignment instructions indicated we may need to add methods to
+     * ensure that only objects of our CafeOrder subclasses may be added to the
+     * ArrayList. I've tested adding other classes, and it appears that since
+     * the list was defined as ArrayList<CafeOrder>, no other classes may be
+     * added without throwing an exception.
      */
     private void processLine(String currentLine) {
         String[] order = currentLine.split(",", 5);
@@ -131,14 +135,15 @@ class CafeOrderList {
      */
     public void sort() {
         for(int i = 0; i < orders.size(); i++) {
-            CafeOrder order = orders.get(i);
 
+            CafeOrder order = orders.get(i);
             int j = i - 1;
+
             while(j >= 0 && order.cheaperThan(orders.get(j))) {
                 orders.set(j + 1, orders.get(j));
                 j--;
             }
-            
+
             orders.set(j + 1, order);
         }
     }
@@ -152,9 +157,11 @@ class CafeOrderList {
         }
         
         string += divider() + "\n";
+
         return string;
     }
 
+    // Generates a header row for the output table
     private static String listHeader() {
         String header = String.format(CafeOrder.columnFormats(0), "Qty") +
                         String.format(CafeOrder.columnFormats(1), "Item") +
@@ -167,11 +174,13 @@ class CafeOrderList {
         return header;
     }
 
+    // Generates dividers for the output table
     private static String divider() {
         return "-".repeat(CafeOrder.rowLength() + 1);
     }
 
-    public String totalsToString() {
+    // generates grand total price and shows totals of various categories
+    public String totals() {
         String fullRowFormat = "%" + (CafeOrder.rowLength() - 5) + "s";
 
         return String.format(fullRowFormat, "Grand total: $") + grandTotal() + "\n" + 
@@ -334,10 +343,12 @@ class Sandwich extends Food {
         this.bread = bread;
     }
 
+    @Override
     protected String secondColumnString() {
         return filling + " sandwich(es) on " + bread;
     }
 
+    @Override
     public double getTax() {
         return calcTax();
     }
@@ -351,10 +362,12 @@ class Donut extends Food {
         this.flavour = flavour;
     }
 
+    @Override
     protected String secondColumnString() {
         return flavour + " donut(s)";
     }
 
+    @Override
     public double getTax() {
         double tax = super.getTax();
 
@@ -407,10 +420,12 @@ class Pop extends Drink {
         this.brand = brand;
     }
 
+    @Override
     protected double[] getPrices() {
         return new double[] { 1.79, 2.09, 2.49 };
     } 
 
+    @Override
     protected String secondColumnString() {
         return size + " " + brand + " pop(s)";
     }
@@ -421,10 +436,12 @@ class Coffee extends Drink {
         super(quantity, size);
     }
 
+    @Override
     protected double[] getPrices() {
         return new double[] { 1.39, 1.69, 1.99 };
     } 
 
+    @Override
     protected String secondColumnString() {
         return size + " coffee(s)";
     }

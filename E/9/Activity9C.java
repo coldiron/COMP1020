@@ -18,8 +18,8 @@ public class Activity9C {
 			copy = list.clone();
 
 			copy.print();
-			System.out.println("Admitting: " + copy.nextAdmission());
-			System.out.println();
+			System.out.println("Admitting: \n" + copy.nextAdmission());
+			System.out.println("***************************************\n");
 
 			testPatientList(list, names, severities, pos + 1);
 			testPatientList(copy, names, severities, pos + 1);
@@ -57,12 +57,19 @@ class Patient {
 		return before;
 	}
 
+	public boolean moreSevereThan(Patient patient) {
+		return severity > patient.severity;
+	}
+
 	public int getSeverity() {
 		return severity;
 	}
 
 	public String toString() {
-		return name + " arrived at " + arrival + " with severity " + severity;
+	//	return name + " arrived at " + arrival + " with severity " + severity;
+		return String.format("%10s", name) + 
+			   String.format("%13s", " arrived at " + arrival) +
+			   String.format("%-15s",  " with severity " + severity);
 	}
 }
 
@@ -84,60 +91,28 @@ class PatientList {
 
 		patient = new Patient(name, lastArrival, severity);
 
-		if(head == null || head.data.getSeverity() < severity) {
+		if(head == null || patient.moreSevereThan(head.data)) {
 			head = new PatientNode(patient, head);
 		}
 		else {
-			recursiveAdd(patient, head);
+			recursiveSortedAdd(patient, head);
 		}
 	}
 
-	public void recursiveAdd(Patient patient, PatientNode node) {
+	private void recursiveSortedAdd(Patient patient, PatientNode node) {
 		PatientNode newNode;
 		if(node.next == null) {
 			newNode = new PatientNode(patient, null);
 			node.next = newNode;
 		}
-		else if(patient.getSeverity() > node.next.data.getSeverity()) {
+		else if(patient.moreSevereThan(node.next.data)) {
 			newNode = new PatientNode(patient, node.next);
 			node.next = newNode;
 		}
 		else {
-			recursiveAdd(patient, node.next);
+			recursiveSortedAdd(patient, node.next);
 		}
 	}
-
-
-/* 	public PatientNode getInsertionNode(Patient patient) {
-		PatientNode insertionNode = null;
-		PatientNode current = head;
-		PatientNode previous = current;
-		boolean found = false;
-
-		while(found == false && current.next != null) {
-			if(patient.shouldComeBefore(current.data)) {
-				insertionNode = previous;
-				found = true;
-			} 
-			else {
-				previous = current;
-				current = current.next;
-			}
-		}
-
-		return insertionNode;
-	} */
-
-/* 	public void add(String name, int severity) {
-		Patient patient;
-		
-		lastArrival++;
-		size++;
-
-		patient = new Patient(name, lastArrival, severity);
-
-		head = new PatientNode(patient, head);
-	} */
 
 	public int size() {
 		return size;
@@ -187,8 +162,9 @@ class PatientList {
 			current = current.next;
 		}
 		
-		System.out.println("Size = " + size());
-		System.out.println("Last arrival = " + lastArrival);
+		System.out.println();
+		System.out.println(String.format("%39s", "Size = " + size()));
+		System.out.println(String.format("%39s", "Last arrival = " + lastArrival));
 	}
 	
 	public PatientList clone() {

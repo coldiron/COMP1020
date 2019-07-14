@@ -21,7 +21,7 @@ class AckermannTable {
         this.nMax = nMax;
     }
 
-    public String toString() {u
+    public String toString() {
         return recursiveTable("%5s|", mMax, nMax, 0, 0);
     }
 
