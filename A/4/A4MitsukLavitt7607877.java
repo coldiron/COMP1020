@@ -319,6 +319,8 @@ abstract class Order {
 // Food has its own abstract class so we can get a count of food items at the
 // end.
 abstract class Food extends Order {
+    // We have a constructor here so subclasses of Food can access Order's 
+    // constructor
     public Food(int quantity, double price) {
         super(quantity, price);
     }
