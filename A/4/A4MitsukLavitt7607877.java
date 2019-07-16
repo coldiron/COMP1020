@@ -1,11 +1,11 @@
 /**
- * A4QBMitsukLavitt7607877
+ * A4MitsukLavitt7607877
  *
  * COMP 1020 SECTION D01
  * INSTRUCTOR    Safiur Mahdi
- * ASSIGNMENT    Assignment 4, Question B
+ * ASSIGNMENT    Assignment 4, Question A and B
  * @author       Richard Mitsuk Lavitt, 7607877
- * @version      2019-07-05
+ * @version      2019-07-15
  *
  * PURPOSE: Takes orders for a cafe and calculates prices, etc.
  */
@@ -15,9 +15,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-class A4QBMitsukLavitt7607877 {
+class A4MitsukLavitt7607877 {
     public static void main(String[] args) {
-        CafeOrderList orders = new CafeOrderList();
+        OrderList orders = new OrderList();
 
         orders.processFile("a4b.txt");
 
@@ -38,11 +38,11 @@ class A4QBMitsukLavitt7607877 {
  * Collection class to keep track of orders in a cafe. Provides helper methods
  * to compute total price, etc.
  */
-class CafeOrderList {
-    private ArrayList<CafeOrder> orders;
+class OrderList {
+    private ArrayList<Order> orders;
 
-    public CafeOrderList() {
-        orders = new ArrayList<CafeOrder>();
+    public OrderList() {
+        orders = new ArrayList<Order>();
     }
 
     public void processFile(String filename) {
@@ -82,9 +82,9 @@ class CafeOrderList {
      * object for each. We assume there are no errors in the input.
      * 
      * The assignment instructions indicated we may need to add methods to
-     * ensure that only objects of our CafeOrder subclasses may be added to the
+     * ensure that only objects of our Order subclasses may be added to the
      * ArrayList. I've tested adding other classes, and it appears that since
-     * the list was defined as ArrayList<CafeOrder>, no other classes may be
+     * the list was defined as ArrayList<Order>, no other classes may be
      * added without throwing an exception.
      */
     private void processLine(String currentLine) {
@@ -92,40 +92,23 @@ class CafeOrderList {
 
         switch(order[0]) {
             case "Coffee":
-                orders.add(
-                    new Coffee(
-                        Integer.parseInt(order[1]), 
-                        order[2]
-                    )
-                );
+                orders.add(new Coffee(Integer.parseInt(order[1]), order[2]));
                 break;
             case "Pop":
-                orders.add(
-                    new Pop(
-                        Integer.parseInt(order[1]), 
-                        order[2],
-                        order[3]
-                    )
-                );
+                orders.add(new Pop(Integer.parseInt(order[1]), 
+                                   order[2],
+                                   order[3]));
                 break;
             case "Donut":
-                orders.add(
-                    new Donut(
-                        Integer.parseInt(order[1]), 
-                        Double.parseDouble(order[2]),
-                        order[3]
-                    )
-                );
+                orders.add(new Donut(Integer.parseInt(order[1]), 
+                                     Double.parseDouble(order[2]),
+                                     order[3]));
                 break;
             case "Sandwich":
-                orders.add(
-                    new Sandwich(
-                        Integer.parseInt(order[1]),
-                        Double.parseDouble(order[2]),
-                        order[3],
-                        order[4]
-                    )
-                );
+                orders.add(new Sandwich(Integer.parseInt(order[1]),
+                                        Double.parseDouble(order[2]),
+                                        order[3],
+                                        order[4]));
                 break;
         }
     }
@@ -135,15 +118,12 @@ class CafeOrderList {
      */
     public void sort() {
         for(int i = 0; i < orders.size(); i++) {
-
-            CafeOrder order = orders.get(i);
+            Order order = orders.get(i);
             int j = i - 1;
-
             while(j >= 0 && order.cheaperThan(orders.get(j))) {
                 orders.set(j + 1, orders.get(j));
                 j--;
             }
-
             orders.set(j + 1, order);
         }
     }
@@ -152,8 +132,8 @@ class CafeOrderList {
         String string = new String();
         string += listHeader() + "\n";
 
-        for(CafeOrder o: orders) {
-            string += o + "\n";
+        for(Order order: orders) {
+            string += order + "\n";
         }
         
         string += divider() + "\n";
@@ -161,65 +141,32 @@ class CafeOrderList {
         return string;
     }
 
-    // Generates a header row for the output table
-    private static String listHeader() {
-        String header = String.format(CafeOrder.columnFormats(0), "Qty") +
-                        String.format(CafeOrder.columnFormats(1), "Item") +
-                        String.format(CafeOrder.columnFormats(2), " @ Price") +
-                        String.format(CafeOrder.columnFormats(3), "") +
-                        String.format(CafeOrder.columnFormats(4), "Total") +"\n";
 
-        header += divider(); 
-
-        return header;
-    }
-
-    // Generates dividers for the output table
-    private static String divider() {
-        return "-".repeat(CafeOrder.rowLength() + 1);
-    }
-
-    // generates grand total price and shows totals of various categories
+    // totals of various categories plus a grand total price at the end
     public String totals() {
-        String fullRowFormat = "%" + (CafeOrder.rowLength() - 5) + "s";
-
-        return String.format(fullRowFormat, "Grand total: $") + grandTotal() + "\n" + 
+        return totalsRow(count(Donut.class),    "donut(s)") +
+               totalsRow(count(Sandwich.class), "sandwich(es)") +
+               totalsRow(count(Food.class),     "food(s)") +
+               totalsRow(count(Pop.class),      "pop(s)") +
+               totalsRow(count(Coffee.class),   "coffee(s)") +
+               totalsRow(count(Drink.class),    "drink(s)") +
+               totalsRow(count(Order.class),    "item(s)") +
                divider() + "\n" +
-
-               String.format(CafeOrder.columnFormats(0), count(Donut.class)) + 
-               String.format(CafeOrder.columnFormats(1), "donut(s)") + "\n" +
-
-               String.format(CafeOrder.columnFormats(0), count(Sandwich.class)) +
-               String.format(CafeOrder.columnFormats(1), "sandwich(es)") + "\n" +
-
-               String.format(CafeOrder.columnFormats(0), count(Food.class)) +
-               String.format(CafeOrder.columnFormats(1), "food(s)") + "\n\n" +
-
-               String.format(CafeOrder.columnFormats(0), count(Pop.class)) + 
-               String.format(CafeOrder.columnFormats(1), "pop(s)") + "\n" +
-
-               String.format(CafeOrder.columnFormats(0), count(Coffee.class)) +
-               String.format(CafeOrder.columnFormats(1), "coffee(s)") + "\n" +
-
-               String.format(CafeOrder.columnFormats(0), count(Drink.class)) +
-               String.format(CafeOrder.columnFormats(1), "drink(s)") + "\n\n" +
-
-               String.format(CafeOrder.columnFormats(0), count(CafeOrder.class)) +
-               String.format(CafeOrder.columnFormats(1), "item(s)") + "\n" +
-               divider() + "\n"; 
+               Order.formatRow("", "", "", " total:", " $" + grandTotal()) +
+               "\n" + divider() + "\n"; 
     }
 
     /**
      * Counts given class of objects in orders list
-     * @param c class, in format Klass.class
+     * @param klass class, in format Klass.class
      * @return integer count of objects found in list
      */
-    private int count(Class<?> c) {
+    private int count(Class<?> klass) {
         int count = 0;
 
-        for(CafeOrder o: orders) {
-            if(c.isInstance(o)) {
-                count += o.getQuantity();
+        for(Order order: orders) {
+            if(klass.isInstance(order)) {
+                count += order.getQuantity();
             }
         }
 
@@ -232,69 +179,97 @@ class CafeOrderList {
     private String grandTotal() {
         double total = 0.0;
 
-        for(CafeOrder o: orders) {
-            total += o.totalPrice();
+        for(Order order: orders) {
+            total += order.totalPrice();
         }
 
-        return CafeOrder.formatCents(total);
+        return Order.formatCents(total);
+    }
+
+    // Helper to properly format rows of total item counts
+    private static String totalsRow(int count, String label) {
+        return Order.formatRow(Integer.toString(count), label, "", "", "\n");
+    }
+
+    // Generates a header row for the output table
+    private static String listHeader() {
+        return Order.formatRow("Qty", "Item", " @ Price", "", "Total") +
+               "\n" + divider();
+    }
+
+    // Generates dividers for the output table
+    private static String divider() {
+        return "-".repeat(Order.rowLength() + 1);
     }
 }
 
-abstract class CafeOrder {
+abstract class Order {
     private int quantity;
     private double price;
 
+    private static final double TAX_RATE = 0.07;
 
-    public CafeOrder(){
+    public Order(){
     }
 
-    public CafeOrder(int quantity) {
+    public Order(int quantity) {
         this.quantity = quantity;
     }
 
-    public CafeOrder(int quantity, double price) {
+    public Order(int quantity, double price) {
         this.quantity = quantity;
         this.price = price;
-    }
-
-    public String toString() {
-        return String.format(columnFormats(0), quantity) + 
-               String.format(columnFormats(1), this.secondColumnString()) +
-               String.format(columnFormats(2), " @ $" + formatCents(price)) +
-               String.format(columnFormats(3), ", total: ") +
-               String.format(columnFormats(4), "$" + formatCents(totalPrice()));
-
-    }
-
-    /**
-     * Delegates the second column in our output to subclasses. Items will
-     * differ in how they're described; pops have a brand, sandwiches have
-     * bread and filling, etc.
-     */
-    protected abstract String secondColumnString();
-
-    public boolean cheaperThan(CafeOrder o) {
-        return totalPrice() < o.totalPrice();
-    }
-
-    public double totalPrice() {
-        return (price * quantity) + getTax();
     }
 
     public int getQuantity() {
         return quantity;
     }
 
-    protected double getPrice() {
+    private double getPrice() {
         return price;
     }
 
     protected void setPrice(double price) {
         this.price = price;
     }
+
+    public String toString() {
+        return formatRow(Integer.toString(quantity), 
+                         this.secondColumnString(), 
+                         " @ $" + formatCents(price), 
+                         ", total: ",
+                         "$" + formatCents(totalPrice()));
+    }
+
+    /**
+     * Items will differ in how they're described; pops have a brand, 
+     * sandwiches have bread and filling, etc.
+     */
+    protected abstract String secondColumnString();
+
+    public boolean cheaperThan(Order order) {
+        return totalPrice() < order.totalPrice();
+    }
+
+    public double totalPrice() {
+        return (price * quantity) + getTax();
+    }
     
-    protected double getTax() {
-        return 0.0;
+    public double getTax() {
+        return isTaxable() ? calcTax() : 0.0;
+    }
+
+    private double calcTax() {
+        return getQuantity() * getPrice() * TAX_RATE;
+    }
+
+    private boolean isTaxable() {
+        return getQuantity() < minimumTaxFreeQuantity();
+    }
+
+    // Allows adjustment of whether items are taxed per subclass.
+    protected int minimumTaxFreeQuantity() {
+        return 0;
     }
 
     /** 
@@ -319,25 +294,30 @@ abstract class CafeOrder {
     }
 
     /** 
-     * Adjustable column widths for tabular output. This is public because 
-     * it's also used in our CafeOrderList class.
+     * Adjustable column widths for tabular output.
      */
-    public static String columnFormats(int column) {
+    private static String columnFormats(int column) {
         String[] formats = { "%4s", "%52s", "%7s", "%9s", "%7s" };
 
         return formats[column];
     }
+
+    public static String formatRow(String first, String second, String third,
+                                   String fourth, String fifth) {
+
+        return String.format(columnFormats(0), first) + 
+               String.format(columnFormats(1), second) +
+               String.format(columnFormats(2), third) +
+               String.format(columnFormats(3), fourth) +
+               String.format(columnFormats(4), fifth);
+    }
 }
 
-abstract class Food extends CafeOrder {
-    protected static final double TAX_RATE = 0.07;
-
+// Food has its own abstract class so we can get a count of food items at the
+// end.
+abstract class Food extends Order {
     public Food(int quantity, double price) {
         super(quantity, price);
-    }
-
-    protected double calcTax() {
-        return getQuantity() * getPrice() * TAX_RATE;
     }
 }
 
@@ -352,13 +332,15 @@ class Sandwich extends Food {
     }
 
     @Override
-    protected String secondColumnString() {
-        return filling + " sandwich(es) on " + bread;
+    protected int minimumTaxFreeQuantity() {
+        // This should be good enough because an order of over 
+        // 2 billion sandwiches is improbable.
+        return Integer.MAX_VALUE;
     }
 
     @Override
-    public double getTax() {
-        return calcTax();
+    protected String secondColumnString() {
+        return filling + " sandwich(es) on " + bread;
     }
 }
 
@@ -376,19 +358,13 @@ class Donut extends Food {
     }
 
     @Override
-    public double getTax() {
-        double tax = super.getTax();
-
+    protected int minimumTaxFreeQuantity() {
         // Donuts are only taxable if there are fewer than 6
-        if(getQuantity() < 6) {
-            tax = calcTax();
-        }
-
-        return tax;
+        return 6;
     }
 }
 
-abstract class Drink extends CafeOrder {
+abstract class Drink extends Order {
     private String size;
 
     public Drink(int quantity, String size) {
@@ -408,7 +384,7 @@ abstract class Drink extends CafeOrder {
     }
 
     private void setPrice() {
-        double[] prices = this.getPrices();
+        double[] prices = getPrices();
 
         switch(size) {
             case "small":
