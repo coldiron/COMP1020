@@ -5,7 +5,7 @@
  * INSTRUCTOR    Safiur Mahdi
  * ASSIGNMENT    Assignment 4, Question A and B
  * @author       Richard Mitsuk Lavitt, 7607877
- * @version      2019-07-15
+ * @version      2019-07-16
  *
  * PURPOSE: Takes orders for a cafe and calculates prices, etc.
  */
@@ -158,11 +158,11 @@ class OrderList {
     /**
      * Counts given class of objects in orders list
      */
-    private int count(Class<?> klass) {
+    private int count(Class clazz) {
         int count = 0;
 
         for(Order order: orders) {
-            if(klass.isInstance(order)) {
+            if(clazz.isInstance(order)) {
                 count += order.getQuantity();
             }
         }
@@ -171,22 +171,22 @@ class OrderList {
     }
 
     // Helper to properly format rows of total item counts
-    private String totalsRow(Class klass, String label) {
-        return Order.formatRow(Integer.toString(count(klass)), 
+    private String totalsRow(Class clazz, String label) {
+        return Order.formatRow(Integer.toString(count(clazz)), 
                                label, 
                                "", 
                                "   total: ", 
-                               "$" + orderTypeTotal(klass)) + "\n";
+                               "$" + orderTypeTotal(clazz)) + "\n";
     }
 
     /**
      * Calculates the grand total of all items of given class after tax
      */
-    private String orderTypeTotal(Class klass) {
+    private String orderTypeTotal(Class clazz) {
         double total = 0.0;
 
         for(Order order: orders) {
-            if(klass.isInstance(order)) {
+            if(clazz.isInstance(order)) {
                 total += order.totalPrice();
             }
         }
