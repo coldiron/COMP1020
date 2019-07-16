@@ -129,8 +129,7 @@ class OrderList {
     }
 
     public String toString() {
-        String string = new String();
-        string += listHeader() + "\n";
+        String string = listHeader() + "\n";
 
         for(Order order: orders) {
             string += order + "\n";
@@ -144,22 +143,20 @@ class OrderList {
 
     // totals of various categories plus a grand total price at the end
     public String totals() {
-        return totalsRow(count(Donut.class),    "donut(s)") +
-               totalsRow(count(Sandwich.class), "sandwich(es)") +
-               totalsRow(count(Food.class),     "food(s)") +
-               totalsRow(count(Pop.class),      "pop(s)") +
-               totalsRow(count(Coffee.class),   "coffee(s)") +
-               totalsRow(count(Drink.class),    "drink(s)") +
-               totalsRow(count(Order.class),    "item(s)") +
+        return totalsRow(Sandwich.class, "sandwich(es)") +
+               totalsRow(Donut.class,    "donut(s)") +
+               totalsRow(Food.class,     "food(s)") +
                divider() + "\n" +
-               Order.formatRow("", "", "", " total:", " $" + grandTotal()) +
-               "\n" + divider() + "\n"; 
+               totalsRow(Coffee.class,   "coffee(s)") +
+               totalsRow(Pop.class,      "pop(s)") +
+               totalsRow(Drink.class,    "drink(s)") +
+               divider() + "\n" +
+               totalsRow(Order.class,    "item(s)") +
+               divider() + "\n"; 
     }
 
     /**
      * Counts given class of objects in orders list
-     * @param klass class, in format Klass.class
-     * @return integer count of objects found in list
      */
     private int count(Class<?> klass) {
         int count = 0;
@@ -173,22 +170,28 @@ class OrderList {
         return count;
     }
 
+    // Helper to properly format rows of total item counts
+    private String totalsRow(Class klass, String label) {
+        return Order.formatRow(Integer.toString(count(klass)), 
+                               label, 
+                               "", 
+                               "   total: ", 
+                               "$" + orderTypeTotal(klass)) + "\n";
+    }
+
     /**
-     * Calculates the grand total of all items in the list after tax
+     * Calculates the grand total of all items of given class after tax
      */
-    private String grandTotal() {
+    private String orderTypeTotal(Class klass) {
         double total = 0.0;
 
         for(Order order: orders) {
-            total += order.totalPrice();
+            if(klass.isInstance(order)) {
+                total += order.totalPrice();
+            }
         }
 
         return Order.formatCents(total);
-    }
-
-    // Helper to properly format rows of total item counts
-    private static String totalsRow(int count, String label) {
-        return Order.formatRow(Integer.toString(count), label, "", "", "\n");
     }
 
     // Generates a header row for the output table
