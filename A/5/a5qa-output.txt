@@ -1,0 +1,34 @@
+Enter a string, 'quit' to exit
+disestablishmentarianism
+
+           dm
+          dism
+         disism
+        disenism
+       disesanism
+      disestianism
+     disestarianism
+    disestabarianism
+   disestabltarianism
+  disestablintarianism
+ disestablisentarianism
+disestablishmentarianism
+
+Enter a string, 'quit' to exit
++-! *# =~ ~= #* !-+
+
+         +
+        +-+
+       +-!-+
+      +-! !-+
+     +-! * !-+
+    +-! *#* !-+
+   +-! *# #* !-+
+  +-! *# = #* !-+
+ +-! *# =~= #* !-+
++-! *# =~ ~= #* !-+
+
+Enter a string, 'quit' to exit
+quit
+
+End of processing.

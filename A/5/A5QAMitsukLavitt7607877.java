@@ -7,7 +7,7 @@
  * @author       Richard Mitsuk Lavitt, 7607877
  * @version      2019-07-17
  *
- * PURPOSE: Prints a triangle from text using recursion 
+ * PURPOSE: Prints a triangle from input text using recursion.
  */
 
 import java.util.Scanner;
@@ -40,6 +40,11 @@ class A5QAMitsukLavitt7607877 {
         String beginningOfLine = "" + s.charAt(first);
         String endOfLine = "";
         
+        /**
+         * We decrement 'last' here rather than in the recursive call below
+         * because if the character count is odd, we don't want it decremented
+         * on the first call.
+         */
         if(s.length() % 2 == 0) {
             endOfLine += s.charAt(last);
             last--;
@@ -48,21 +53,30 @@ class A5QAMitsukLavitt7607877 {
         centeredPrintln(beginningOfLine + endOfLine, s.length());
 
         if((beginningOfLine + endOfLine).length() < s.length()) {
-            trianglePrintRecursive(s, beginningOfLine, endOfLine, first + 1, last);
+            trianglePrintRecursive(s, beginningOfLine, endOfLine, 
+                                   first + 1, last);
         }
     }
 
-    private static void trianglePrintRecursive(String s, String beginningOfLine, String endOfLine, int first, int last) {
+    private static void trianglePrintRecursive(String s, String beginningOfLine,
+    String endOfLine, int first, int last) {
+
         beginningOfLine += s.charAt(first);
         endOfLine = s.charAt(last) + endOfLine;
 
         centeredPrintln(beginningOfLine + endOfLine, s.length());
 
         if((beginningOfLine + endOfLine).length() < s.length()) {
-            trianglePrintRecursive(s, beginningOfLine, endOfLine, first + 1, last - 1);
+            trianglePrintRecursive(s, beginningOfLine, endOfLine, 
+                                   first + 1, last - 1);
         }
     }
 
+    /**
+     * Prints a line of a word triangle with the characters on the line
+     * centred in spaces, with the total line length equal to the word's
+     * ultimate length;
+     */
     private static void centeredPrintln(String toPrint, int totalLength) {
         int lengthRemaining = toPrint.length() + 
                               ((totalLength - toPrint.length()) / 2);

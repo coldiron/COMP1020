@@ -1,0 +1,20 @@
+Pop,5,large,Splat! Cola
+Sandwich,1,3.89,mystery meat,37-grain whole wheat
+Sandwich,3,2.99,squeeze cheese,wonderful bread
+Donut,1,0.15,petite oeufs
+Pop,2,small,Sugar Water
+Coffee,3,medium
+Donut,7,0.89,chocolate
+Pop,1,medium,Splat! Cola
+Donut,3,1.19,eclair
+Coffee,1,large
+Sandwich,1,5.99,club,rye
+Coffee,2,large
+Coffee,7,small
+Sandwich,1,4.59,chicken of the sea,seaweed
+Donut,6,0.89,baker's choice
+Donut,1,1.10,lemon buster
+Sandwich,2,4.99,peanut butter and bacon,bagel
+Donut,120,0.15,petite oeufs
+Pop,3,medium,Fresssh
+Coffee,10,medium
